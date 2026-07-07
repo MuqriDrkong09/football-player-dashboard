@@ -1,0 +1,5 @@
+export { AboutPage } from './AboutPage'
+export { ComparePage } from './ComparePage'
+export { FavoritesPage } from './FavoritesPage'
+export { HomePage } from './HomePage'
+export { PlayersPage } from './PlayersPage'
