@@ -1,10 +1,19 @@
-import { PlaceholderPage } from './PlaceholderPage'
+import {
+  FeaturedPlayersSection,
+  HeroSection,
+  PopularTeamsSection,
+  TopAssistsSection,
+  TopScorersSection,
+} from '@/components/home'
 
 export function HomePage() {
   return (
-    <PlaceholderPage
-      title="Football Dashboard"
-      description="Explore player stats, compare performances, and track your favorites."
-    />
+    <div className="space-y-12 sm:space-y-16">
+      <HeroSection />
+      <FeaturedPlayersSection />
+      <TopScorersSection />
+      <TopAssistsSection />
+      <PopularTeamsSection />
+    </div>
   )
 }
