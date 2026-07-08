@@ -1,8 +1,71 @@
-import type { PlayerProfile } from '@/types/api-football'
+import type { PlayerProfile, PlayerStatistics } from '@/types/api-football'
 import type { PlayerPosition } from '@/config/players'
+import { DEFAULT_SEASON } from '@/config/football'
+
+export interface AggregatedPlayerStats {
+  goals: number
+  assists: number
+  minutes: number
+  matches: number
+  yellowCards: number
+  redCards: number
+}
+
+export interface CompetitionChartData {
+  name: string
+  goals: number
+  assists: number
+  minutes: number
+  matches: number
+  yellowCards: number
+  redCards: number
+}
 
 export function getPrimaryStatistics(profile: PlayerProfile) {
   return profile.statistics[0] ?? null
+}
+
+export function aggregatePlayerStatistics(
+  statistics: PlayerStatistics[],
+): AggregatedPlayerStats {
+  return statistics.reduce<AggregatedPlayerStats>(
+    (totals, stat) => ({
+      goals: totals.goals + (stat.goals?.total ?? 0),
+      assists: totals.assists + (stat.goals?.assists ?? 0),
+      minutes: totals.minutes + (stat.games?.minutes ?? 0),
+      matches: totals.matches + (stat.games?.appearences ?? 0),
+      yellowCards: totals.yellowCards + (stat.cards?.yellow ?? 0),
+      redCards: totals.redCards + (stat.cards?.red ?? 0),
+    }),
+    {
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      matches: 0,
+      yellowCards: 0,
+      redCards: 0,
+    },
+  )
+}
+
+export function getCompetitionChartData(
+  statistics: PlayerStatistics[],
+): CompetitionChartData[] {
+  return statistics.map((stat) => ({
+    name: stat.league.name,
+    goals: stat.goals?.total ?? 0,
+    assists: stat.goals?.assists ?? 0,
+    minutes: stat.games?.minutes ?? 0,
+    matches: stat.games?.appearences ?? 0,
+    yellowCards: stat.cards?.yellow ?? 0,
+    redCards: stat.cards?.red ?? 0,
+  }))
+}
+
+export function pickDefaultSeason(seasons: number[]): number | null {
+  if (seasons.length === 0) return null
+  if (seasons.includes(DEFAULT_SEASON)) return DEFAULT_SEASON
+  return Math.max(...seasons)
 }
 
 export function getPlayerGoals(profile: PlayerProfile): number {

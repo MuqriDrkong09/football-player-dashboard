@@ -17,6 +17,8 @@ export const queryKeys = {
     details: () => [...queryKeys.players.all(), 'detail'] as const,
     detail: (params: GetPlayerParams) =>
       [...queryKeys.players.details(), params] as const,
+    seasons: (playerId: number) =>
+      [...queryKeys.players.all(), 'seasons', playerId] as const,
     topScorers: (params: GetTopScorersParams) =>
       [...queryKeys.players.all(), 'top-scorers', params] as const,
     topAssists: (params: GetTopAssistsParams) =>

@@ -24,7 +24,7 @@ export function PlayerCard({ profile, highlight, className }: PlayerCardProps) {
   const assists = stats?.goals?.assists ?? 0
 
   return (
-    <Link to="/players" className="group block h-full">
+    <Link to={`/players/${player.id}`} className="group block h-full">
       <Card
         className={cn(
           'h-full transition-all hover:border-primary/40 hover:shadow-md',

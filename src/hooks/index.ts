@@ -1,5 +1,6 @@
 export { useTheme } from './use-theme'
 export { usePlayer } from './use-player'
+export { usePlayerSeasons } from './use-player-seasons'
 export { usePlayers } from './use-players'
 export { useTopAssists } from './use-top-assists'
 export { useTopScorers } from './use-top-scorers'
