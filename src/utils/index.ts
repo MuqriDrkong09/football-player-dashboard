@@ -11,3 +11,10 @@ export {
   pickDefaultSeason,
 } from './player'
 export type { AggregatedPlayerStats, CompetitionChartData } from './player'
+export {
+  buildComparisonChartData,
+  COMPARISON_STATS,
+  countComparisonWins,
+  getBetterPlayer,
+} from './compare'
+export type { ComparisonChartRow, ComparisonStatKey } from './compare'
