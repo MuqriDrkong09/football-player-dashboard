@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { FavoriteButton } from '@/components/favorites'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -8,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { useFavorites } from '@/hooks'
 import type { PlayerProfile } from '@/types/api-football'
 import { getPrimaryStatistics } from '@/utils/player'
 
@@ -19,16 +21,23 @@ type PlayerListCardProps = {
 export function PlayerListCard({ profile, className }: PlayerListCardProps) {
   const { player } = profile
   const stats = getPrimaryStatistics(profile)
+  const { isFavorite, toggleFavorite } = useFavorites()
 
   return (
-    <Link to={`/players/${player.id}`} className="group block h-full">
-      <Card
-        className={cn(
-          'h-full overflow-hidden transition-all hover:border-primary/40 hover:shadow-md',
-          className,
-        )}
-      >
-        <CardHeader className="flex flex-col items-center gap-4 p-4 pb-2 text-center sm:flex-row sm:items-start sm:text-left">
+    <Card
+      className={cn(
+        'relative h-full overflow-hidden transition-all hover:border-primary/40 hover:shadow-md',
+        className,
+      )}
+    >
+      <FavoriteButton
+        isFavorite={isFavorite(player.id)}
+        onClick={() => toggleFavorite(profile)}
+        className="absolute right-2 top-2 z-10"
+      />
+
+      <Link to={`/players/${player.id}`} className="group block h-full">
+        <CardHeader className="flex flex-col items-center gap-4 p-4 pb-2 pt-10 text-center sm:flex-row sm:items-start sm:text-left">
           <img
             src={player.photo}
             alt={player.name}
@@ -72,7 +81,7 @@ export function PlayerListCard({ profile, className }: PlayerListCardProps) {
             </Badge>
           )}
         </CardContent>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   )
 }

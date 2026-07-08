@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { FavoriteButton } from '@/components/favorites'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useFavorites } from '@/hooks'
 import type { PlayerProfile } from '@/types/api-football'
 import { getPrimaryStatistics } from '@/utils/player'
 import { SeasonSelector } from './SeasonSelector'
@@ -31,6 +33,8 @@ export function PlayerProfileHeader({
   isSeasonsLoading,
   isLoading,
 }: PlayerProfileHeaderProps) {
+  const { isFavorite, toggleFavorite } = useFavorites()
+
   if (isLoading || !profile) {
     return (
       <Card>
@@ -74,12 +78,19 @@ export function PlayerProfileHeader({
             Back to Players
           </Link>
         </Button>
-        <SeasonSelector
-          seasons={seasons}
-          value={selectedSeason}
-          onChange={onSeasonChange}
-          isLoading={isSeasonsLoading}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <SeasonSelector
+            seasons={seasons}
+            value={selectedSeason}
+            onChange={onSeasonChange}
+            isLoading={isSeasonsLoading}
+          />
+          <FavoriteButton
+            isFavorite={isFavorite(player.id)}
+            onClick={() => toggleFavorite(profile)}
+            size="sm"
+          />
+        </div>
       </CardHeader>
 
       <CardContent className="p-6">
