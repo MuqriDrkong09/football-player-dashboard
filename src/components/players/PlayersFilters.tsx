@@ -1,8 +1,7 @@
-import { Search, X } from 'lucide-react'
-import type { FormEvent } from 'react'
+import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Search as PlayerSearch } from '@/components/search'
 import {
   Select,
   SelectContent,
@@ -13,7 +12,7 @@ import {
 import { LEAGUE_LABEL } from '@/config/football'
 import { PLAYER_POSITIONS } from '@/config/players'
 import type { PlayerPosition } from '@/config/players'
-import type { Team } from '@/types/api-football'
+import type { PlayerProfile, Team } from '@/types/api-football'
 
 export type PlayersFilterState = {
   search: string
@@ -28,7 +27,7 @@ type PlayersFiltersProps = {
   teams: Team[]
   isTeamsLoading: boolean
   onSearchChange: (value: string) => void
-  onSearchSubmit: () => void
+  onPlayerSelect: (profile: PlayerProfile) => void
   onPositionChange: (value: PlayerPosition | 'all') => void
   onNationalityChange: (value: string) => void
   onTeamChange: (value: string) => void
@@ -41,17 +40,12 @@ export function PlayersFilters({
   teams,
   isTeamsLoading,
   onSearchChange,
-  onSearchSubmit,
+  onPlayerSelect,
   onPositionChange,
   onNationalityChange,
   onTeamChange,
   onClearFilters,
 }: PlayersFiltersProps) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    onSearchSubmit()
-  }
-
   const hasActiveFilters =
     filters.search.length > 0 ||
     filters.position !== 'all' ||
@@ -67,21 +61,13 @@ export function PlayersFilters({
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={filters.search}
-            onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Search by player name (min. 3 characters)…"
-            className="pl-9"
-            aria-label="Search players"
-          />
-        </div>
-        <Button type="submit" className="sm:w-auto">
-          Search
-        </Button>
-      </form>
+      <PlayerSearch
+        value={filters.search}
+        onValueChange={onSearchChange}
+        onSelect={onPlayerSelect}
+        team={filters.teamId !== 'all' ? Number(filters.teamId) : undefined}
+        placeholder="Search by player name (min. 3 characters)…"
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-2">

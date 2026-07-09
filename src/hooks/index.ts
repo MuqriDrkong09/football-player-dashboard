@@ -1,6 +1,8 @@
+export { useDebounce } from './use-debounce'
 export { useTheme } from './use-theme'
 export { useFavorites } from '@/providers/FavoritesProvider'
 export { usePlayer } from './use-player'
+export { usePlayerSearch } from './use-player-search'
 export { usePlayerSeasons } from './use-player-seasons'
 export { usePlayers } from './use-players'
 export { useTopAssists } from './use-top-assists'

@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CardGridSkeleton } from '@/components/cards'
 import {
   PlayerListCard,
@@ -13,8 +14,8 @@ import {
   LEAGUE_LABEL,
 } from '@/config/football'
 import type { PlayerPosition } from '@/config/players'
-import { usePlayers, useTeams } from '@/hooks'
-import type { GetPlayersParams } from '@/types/api-football'
+import { useDebounce, usePlayers, useTeams } from '@/hooks'
+import type { GetPlayersParams, PlayerProfile } from '@/types/api-football'
 import {
   filterPlayersByNationality,
   filterPlayersByPosition,
@@ -29,9 +30,10 @@ const INITIAL_FILTERS: PlayersFilterState = {
 }
 
 export function PlayersPage() {
+  const navigate = useNavigate()
   const [filters, setFilters] = useState<PlayersFilterState>(INITIAL_FILTERS)
-  const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
+  const searchQuery = useDebounce(filters.search.trim(), 300)
 
   const { teams, isLoading: isTeamsLoading } = useTeams({
     league: DEFAULT_LEAGUE_ID,
@@ -77,10 +79,9 @@ export function PlayersPage() {
   const hasClientFilters =
     filters.position !== 'all' || filters.nationality !== 'all'
 
-  const handleSearchSubmit = () => {
-    setSearchQuery(filters.search.trim())
+  useEffect(() => {
     setPage(1)
-  }
+  }, [searchQuery, filters.teamId])
 
   const handlePositionChange = (position: PlayerPosition | 'all') => {
     setFilters((current) => ({ ...current, position }))
@@ -99,8 +100,11 @@ export function PlayersPage() {
 
   const handleClearFilters = () => {
     setFilters(INITIAL_FILTERS)
-    setSearchQuery('')
     setPage(1)
+  }
+
+  const handlePlayerSelect = (profile: PlayerProfile) => {
+    navigate(`/players/${profile.player.id}`)
   }
 
   return (
@@ -113,7 +117,7 @@ export function PlayersPage() {
         onSearchChange={(search) =>
           setFilters((current) => ({ ...current, search }))
         }
-        onSearchSubmit={handleSearchSubmit}
+        onPlayerSelect={handlePlayerSelect}
         onPositionChange={handlePositionChange}
         onNationalityChange={handleNationalityChange}
         onTeamChange={handleTeamChange}

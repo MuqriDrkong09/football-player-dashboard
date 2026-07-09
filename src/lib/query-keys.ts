@@ -4,6 +4,7 @@ import type {
   GetTeamsParams,
   GetTopAssistsParams,
   GetTopScorersParams,
+  SearchPlayersParams,
 } from '@/types/api-football'
 
 export const queryKeys = {
@@ -14,6 +15,8 @@ export const queryKeys = {
     lists: () => [...queryKeys.players.all(), 'list'] as const,
     list: (params: GetPlayersParams) =>
       [...queryKeys.players.lists(), params] as const,
+    search: (params: SearchPlayersParams) =>
+      [...queryKeys.players.all(), 'search', params] as const,
     details: () => [...queryKeys.players.all(), 'detail'] as const,
     detail: (params: GetPlayerParams) =>
       [...queryKeys.players.details(), params] as const,
