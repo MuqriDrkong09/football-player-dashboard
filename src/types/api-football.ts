@@ -236,6 +236,16 @@ export interface GetTopAssistsParams {
   season: number
 }
 
+export interface GetTopYellowCardsParams {
+  league: number
+  season: number
+}
+
+export interface GetTopRedCardsParams {
+  league: number
+  season: number
+}
+
 export interface GetTeamsParams {
   id?: number
   name?: string

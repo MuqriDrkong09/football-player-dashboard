@@ -25,7 +25,7 @@ export function TopAssistsSection() {
         description={`Playmakers leading the assist charts in the ${LEAGUE_LABEL}`}
         action={
           <Button asChild variant="ghost" size="sm">
-            <Link to="/players">View all</Link>
+            <Link to="/leaderboards">View leaderboards</Link>
           </Button>
         }
       />

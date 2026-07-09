@@ -4,6 +4,7 @@ import {
   Heart,
   Info,
   LayoutDashboard,
+  Trophy,
   Users,
 } from 'lucide-react'
 
@@ -15,6 +16,7 @@ export type NavItem = {
 
 export const mainNavItems: NavItem[] = [
   { label: 'Players', href: '/players', icon: Users },
+  { label: 'Leaderboards', href: '/leaderboards', icon: Trophy },
   { label: 'Compare', href: '/compare', icon: GitCompareArrows },
   { label: 'Favorites', href: '/favorites', icon: Heart },
   { label: 'About', href: '/about', icon: Info },

@@ -4,7 +4,9 @@ export {
   getPlayerSeasons,
   getPlayerStatistics,
   getTopAssists,
+  getTopRedCards,
   getTopScorers,
+  getTopYellowCards,
   searchPlayers,
 } from './players.service'
 

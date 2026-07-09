@@ -5,6 +5,7 @@ import {
   ComparePage,
   FavoritesPage,
   HomePage,
+  LeaderboardsPage,
   PlayerDetailPage,
   PlayersPage,
 } from '@/pages'
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'players', element: <PlayersPage /> },
       { path: 'players/:playerId', element: <PlayerDetailPage /> },
+      { path: 'leaderboards', element: <LeaderboardsPage /> },
       { path: 'compare', element: <ComparePage /> },
       { path: 'favorites', element: <FavoritesPage /> },
       { path: 'about', element: <AboutPage /> },

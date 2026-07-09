@@ -25,7 +25,7 @@ export function TopScorersSection() {
         description={`Leading goal scorers in the ${LEAGUE_LABEL}`}
         action={
           <Button asChild variant="ghost" size="sm">
-            <Link to="/players">View all</Link>
+            <Link to="/leaderboards">View leaderboards</Link>
           </Button>
         }
       />

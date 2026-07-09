@@ -5,7 +5,9 @@ import type {
   GetPlayerSeasonsParams,
   GetPlayerStatisticsParams,
   GetTopAssistsParams,
+  GetTopRedCardsParams,
   GetTopScorersParams,
+  GetTopYellowCardsParams,
   PaginatedResult,
   PlayerProfile,
   SearchPlayersParams,
@@ -64,4 +66,16 @@ export async function getTopAssists(
   params: GetTopAssistsParams,
 ): Promise<PaginatedResult<PlayerProfile[]>> {
   return apiGet<PlayerProfile[]>('/players/topassists', params)
+}
+
+export async function getTopYellowCards(
+  params: GetTopYellowCardsParams,
+): Promise<PaginatedResult<PlayerProfile[]>> {
+  return apiGet<PlayerProfile[]>('/players/topyellowcards', params)
+}
+
+export async function getTopRedCards(
+  params: GetTopRedCardsParams,
+): Promise<PaginatedResult<PlayerProfile[]>> {
+  return apiGet<PlayerProfile[]>('/players/topredcards', params)
 }

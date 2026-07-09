@@ -3,7 +3,9 @@ import type {
   GetPlayersParams,
   GetTeamsParams,
   GetTopAssistsParams,
+  GetTopRedCardsParams,
   GetTopScorersParams,
+  GetTopYellowCardsParams,
   SearchPlayersParams,
 } from '@/types/api-football'
 
@@ -26,6 +28,10 @@ export const queryKeys = {
       [...queryKeys.players.all(), 'top-scorers', params] as const,
     topAssists: (params: GetTopAssistsParams) =>
       [...queryKeys.players.all(), 'top-assists', params] as const,
+    topYellowCards: (params: GetTopYellowCardsParams) =>
+      [...queryKeys.players.all(), 'top-yellow-cards', params] as const,
+    topRedCards: (params: GetTopRedCardsParams) =>
+      [...queryKeys.players.all(), 'top-red-cards', params] as const,
   },
 
   teams: {
