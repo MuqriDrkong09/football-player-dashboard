@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { CardGridSkeleton, PlayerCard, SectionHeader } from '@/components/cards'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { PlayerCard, SectionHeader } from '@/components/cards'
+import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
 import {
   DEFAULT_LEAGUE_ID,
@@ -11,11 +11,12 @@ import {
 import { usePlayers } from '@/hooks'
 
 export function FeaturedPlayersSection() {
-  const { players, isLoading, isError, errorMessage } = usePlayers({
-    league: DEFAULT_LEAGUE_ID,
-    season: DEFAULT_SEASON,
-    page: 1,
-  })
+  const { players, isLoading, isError, errorMessage, refetch, isFetching } =
+    usePlayers({
+      league: DEFAULT_LEAGUE_ID,
+      season: DEFAULT_SEASON,
+      page: 1,
+    })
 
   const featured = players.slice(0, HOME_LIMITS.featuredPlayers)
 
@@ -32,18 +33,19 @@ export function FeaturedPlayersSection() {
       />
 
       {isLoading && (
-        <CardGridSkeleton
+        <LoadingSkeleton
+          variant="card-grid"
           count={HOME_LIMITS.featuredPlayers}
-          variant="player"
+          cardVariant="player"
         />
       )}
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {errorMessage ?? 'Failed to load featured players.'}
-          </AlertDescription>
-        </Alert>
+        <QueryError
+          message={errorMessage ?? 'Failed to load featured players.'}
+          onRetry={() => refetch()}
+          isRetrying={isFetching}
+        />
       )}
 
       {!isLoading && !isError && featured.length > 0 && (
@@ -55,7 +57,10 @@ export function FeaturedPlayersSection() {
       )}
 
       {!isLoading && !isError && featured.length === 0 && (
-        <p className="text-sm text-muted-foreground">No players found.</p>
+        <EmptyState
+          title="No players found"
+          description="Featured players will appear here once data is available."
+        />
       )}
     </section>
   )

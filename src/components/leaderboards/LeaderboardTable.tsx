@@ -1,9 +1,8 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { LoadingSkeleton, QueryError } from '@/components/feedback'
 import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -28,6 +27,8 @@ type LeaderboardTableProps = {
   isLoading?: boolean
   isError?: boolean
   errorMessage?: string | null
+  onRetry?: () => void
+  isRetrying?: boolean
   emptyMessage?: string
 }
 
@@ -86,6 +87,8 @@ export function LeaderboardTable({
   isLoading = false,
   isError = false,
   errorMessage,
+  onRetry,
+  isRetrying = false,
   emptyMessage = 'No players found for this leaderboard.',
 }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<LeaderboardSortKey>(primaryStat)
@@ -125,12 +128,16 @@ export function LeaderboardTable({
 
   if (isError) {
     return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          {errorMessage ?? 'Failed to load leaderboard.'}
-        </AlertDescription>
-      </Alert>
+      <QueryError
+        message={errorMessage ?? 'Failed to load leaderboard.'}
+        onRetry={onRetry}
+        isRetrying={isRetrying}
+      />
     )
+  }
+
+  if (isLoading) {
+    return <LoadingSkeleton variant="table" count={8} />
   }
 
   return (
@@ -171,39 +178,7 @@ export function LeaderboardTable({
           </TableHeader>
 
           <TableBody>
-            {isLoading &&
-              Array.from({ length: 8 }).map((_, index) => (
-                <TableRow key={`skeleton-${index}`}>
-                  <TableCell className="text-right">
-                    <Skeleton className="ml-auto h-4 w-4" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="size-9 rounded-full" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                  </TableCell>
-                  {visibleColumns.slice(1).map((column) => (
-                    <TableCell
-                      key={column.key}
-                      className={cn(
-                        column.className,
-                        column.align === 'right' && 'text-right',
-                      )}
-                    >
-                      <Skeleton
-                        className={cn(
-                          'h-4 w-10',
-                          column.align === 'right' && 'ml-auto',
-                        )}
-                      />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-
-            {!isLoading &&
-              sortedRows.map((row) => (
+            {sortedRows.map((row) => (
                 <TableRow key={row.playerId}>
                   <TableCell className="text-right font-medium text-muted-foreground">
                     {row.rank}
@@ -264,7 +239,7 @@ export function LeaderboardTable({
                 </TableRow>
               ))}
 
-            {!isLoading && sortedRows.length === 0 && (
+            {sortedRows.length === 0 && (
               <TableRow>
                 <TableCell
                   colSpan={visibleColumns.length + 1}

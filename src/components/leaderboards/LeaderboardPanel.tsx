@@ -44,6 +44,8 @@ export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
           isLoading: scorersQuery.isLoading,
           isError: scorersQuery.isError,
           errorMessage: scorersQuery.errorMessage,
+          refetch: scorersQuery.refetch,
+          isFetching: scorersQuery.isFetching,
         }
       case 'assists':
         return {
@@ -51,6 +53,8 @@ export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
           isLoading: assistsQuery.isLoading,
           isError: assistsQuery.isError,
           errorMessage: assistsQuery.errorMessage,
+          refetch: assistsQuery.refetch,
+          isFetching: assistsQuery.isFetching,
         }
       case 'yellow-cards':
         return {
@@ -58,6 +62,8 @@ export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
           isLoading: yellowCardsQuery.isLoading,
           isError: yellowCardsQuery.isError,
           errorMessage: yellowCardsQuery.errorMessage,
+          refetch: yellowCardsQuery.refetch,
+          isFetching: yellowCardsQuery.isFetching,
         }
       case 'red-cards':
         return {
@@ -65,6 +71,8 @@ export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
           isLoading: redCardsQuery.isLoading,
           isError: redCardsQuery.isError,
           errorMessage: redCardsQuery.errorMessage,
+          refetch: redCardsQuery.refetch,
+          isFetching: redCardsQuery.isFetching,
         }
       default:
         return {
@@ -72,26 +80,36 @@ export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
           isLoading: false,
           isError: false,
           errorMessage: null,
+          refetch: async () => undefined,
+          isFetching: false,
         }
     }
   }, [
     assistsQuery.assists,
     assistsQuery.errorMessage,
     assistsQuery.isError,
+    assistsQuery.isFetching,
     assistsQuery.isLoading,
+    assistsQuery.refetch,
     redCardsQuery.errorMessage,
     redCardsQuery.isError,
+    redCardsQuery.isFetching,
     redCardsQuery.isLoading,
     redCardsQuery.players,
+    redCardsQuery.refetch,
     scorersQuery.errorMessage,
     scorersQuery.isError,
+    scorersQuery.isFetching,
     scorersQuery.isLoading,
+    scorersQuery.refetch,
     scorersQuery.scorers,
     tab.value,
     yellowCardsQuery.errorMessage,
     yellowCardsQuery.isError,
+    yellowCardsQuery.isFetching,
     yellowCardsQuery.isLoading,
     yellowCardsQuery.players,
+    yellowCardsQuery.refetch,
   ])
 
   const rows = useMemo(
@@ -106,6 +124,8 @@ export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
       isLoading={activeQuery.isLoading}
       isError={activeQuery.isError}
       errorMessage={activeQuery.errorMessage}
+      onRetry={() => activeQuery.refetch()}
+      isRetrying={activeQuery.isFetching}
     />
   )
 }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { CardGridSkeleton, SectionHeader, TeamCard } from '@/components/cards'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { SectionHeader, TeamCard } from '@/components/cards'
+import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
 import {
   DEFAULT_LEAGUE_ID,
@@ -11,10 +11,11 @@ import {
 import { useTeams } from '@/hooks'
 
 export function PopularTeamsSection() {
-  const { teams, isLoading, isError, errorMessage } = useTeams({
-    league: DEFAULT_LEAGUE_ID,
-    season: DEFAULT_SEASON,
-  })
+  const { teams, isLoading, isError, errorMessage, refetch, isFetching } =
+    useTeams({
+      league: DEFAULT_LEAGUE_ID,
+      season: DEFAULT_SEASON,
+    })
 
   const popularTeams = teams.slice(0, HOME_LIMITS.popularTeams)
 
@@ -31,19 +32,20 @@ export function PopularTeamsSection() {
       />
 
       {isLoading && (
-        <CardGridSkeleton
+        <LoadingSkeleton
+          variant="card-grid"
           count={HOME_LIMITS.popularTeams}
-          variant="team"
+          cardVariant="team"
           className="sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
         />
       )}
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {errorMessage ?? 'Failed to load teams.'}
-          </AlertDescription>
-        </Alert>
+        <QueryError
+          message={errorMessage ?? 'Failed to load teams.'}
+          onRetry={() => refetch()}
+          isRetrying={isFetching}
+        />
       )}
 
       {!isLoading && !isError && popularTeams.length > 0 && (
@@ -55,7 +57,10 @@ export function PopularTeamsSection() {
       )}
 
       {!isLoading && !isError && popularTeams.length === 0 && (
-        <p className="text-sm text-muted-foreground">No teams found.</p>
+        <EmptyState
+          title="No teams found"
+          description="Teams will appear here once data is available."
+        />
       )}
     </section>
   )

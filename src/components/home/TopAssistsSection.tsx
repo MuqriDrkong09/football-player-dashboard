@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { CardGridSkeleton, PlayerCard, SectionHeader } from '@/components/cards'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { PlayerCard, SectionHeader } from '@/components/cards'
+import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
 import {
   DEFAULT_LEAGUE_ID,
@@ -11,10 +11,11 @@ import {
 import { useTopAssists } from '@/hooks'
 
 export function TopAssistsSection() {
-  const { assists, isLoading, isError, errorMessage } = useTopAssists({
-    league: DEFAULT_LEAGUE_ID,
-    season: DEFAULT_SEASON,
-  })
+  const { assists, isLoading, isError, errorMessage, refetch, isFetching } =
+    useTopAssists({
+      league: DEFAULT_LEAGUE_ID,
+      season: DEFAULT_SEASON,
+    })
 
   const topAssists = assists.slice(0, HOME_LIMITS.topAssists)
 
@@ -31,15 +32,19 @@ export function TopAssistsSection() {
       />
 
       {isLoading && (
-        <CardGridSkeleton count={HOME_LIMITS.topAssists} variant="player" />
+        <LoadingSkeleton
+          variant="card-grid"
+          count={HOME_LIMITS.topAssists}
+          cardVariant="player"
+        />
       )}
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {errorMessage ?? 'Failed to load top assists.'}
-          </AlertDescription>
-        </Alert>
+        <QueryError
+          message={errorMessage ?? 'Failed to load top assists.'}
+          onRetry={() => refetch()}
+          isRetrying={isFetching}
+        />
       )}
 
       {!isLoading && !isError && topAssists.length > 0 && (
@@ -55,7 +60,10 @@ export function TopAssistsSection() {
       )}
 
       {!isLoading && !isError && topAssists.length === 0 && (
-        <p className="text-sm text-muted-foreground">No assist data found.</p>
+        <EmptyState
+          title="No assist data found"
+          description="Top assist providers will appear here once data is available."
+        />
       )}
     </section>
   )

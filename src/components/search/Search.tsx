@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { RetryButton } from '@/components/feedback/RetryButton'
 import { DEFAULT_LEAGUE_ID, DEFAULT_SEASON } from '@/config/football'
 import { useDebounce } from '@/hooks/use-debounce'
 import { usePlayerSearch } from '@/hooks/use-player-search'
@@ -88,7 +89,7 @@ export function Search({
   const isDebouncing =
     trimmedInput.length >= minChars && trimmedInput !== trimmedQuery
 
-  const { players, isLoading, isFetching, isError, errorMessage } =
+  const { players, isLoading, isFetching, isError, errorMessage, refetch } =
     usePlayerSearch(
       {
         search: trimmedQuery,
@@ -269,8 +270,16 @@ export function Search({
             )}
 
             {canSearch && isError && (
-              <li className="px-3 py-2 text-sm text-destructive" role="alert">
-                {errorMessage ?? 'Failed to load suggestions'}
+              <li className="px-3 py-2" role="alert">
+                <p className="text-sm text-destructive">
+                  {errorMessage ?? 'Failed to load suggestions'}
+                </p>
+                <RetryButton
+                  onRetry={() => refetch()}
+                  isRetrying={isFetching}
+                  size="sm"
+                  className="mt-2"
+                />
               </li>
             )}
 

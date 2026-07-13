@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CardGridSkeleton } from '@/components/cards'
+import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import {
   PlayerListCard,
   PlayersFilters,
   PlayersPagination,
   type PlayersFilterState,
 } from '@/components/players'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   DEFAULT_LEAGUE_ID,
   DEFAULT_SEASON,
@@ -60,10 +59,17 @@ export function PlayersPage() {
     return params
   }, [filters.teamId, isSearchMode, page, searchQuery])
 
-  const { players, paging, isLoading, isError, errorMessage } = usePlayers(
-    queryParams,
-    { enabled: !isSearchMode || searchQuery.length >= 3 },
-  )
+  const {
+    players,
+    paging,
+    isLoading,
+    isError,
+    errorMessage,
+    refetch,
+    isFetching,
+  } = usePlayers(queryParams, {
+    enabled: !isSearchMode || searchQuery.length >= 3,
+  })
 
   const nationalities = useMemo(
     () => getUniqueNationalities(players),
@@ -142,14 +148,14 @@ export function PlayersPage() {
         </p>
       )}
 
-      {isLoading && <CardGridSkeleton count={9} variant="player" />}
+      {isLoading && <LoadingSkeleton variant="card-grid" count={9} />}
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {errorMessage ?? 'Failed to load players.'}
-          </AlertDescription>
-        </Alert>
+        <QueryError
+          message={errorMessage ?? 'Failed to load players.'}
+          onRetry={() => refetch()}
+          isRetrying={isFetching}
+        />
       )}
 
       {!isLoading && !isError && filteredPlayers.length > 0 && (
@@ -161,12 +167,10 @@ export function PlayersPage() {
       )}
 
       {!isLoading && !isError && filteredPlayers.length === 0 && (
-        <div className="rounded-xl border border-dashed border-border py-16 text-center">
-          <p className="text-lg font-medium">No players found</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Try adjusting your search or filters.
-          </p>
-        </div>
+        <EmptyState
+          title="No players found"
+          description="Try adjusting your search or filters."
+        />
       )}
 
       {!isLoading && !isError && (

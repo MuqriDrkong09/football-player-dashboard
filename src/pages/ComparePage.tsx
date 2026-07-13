@@ -1,7 +1,8 @@
+import { GitCompareArrows } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { ComparisonCharts, PlayerCompareSelector } from '@/components/compare'
+import { EmptyState, QueryError } from '@/components/feedback'
 import { SeasonSelector } from '@/components/player-detail/SeasonSelector'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { DEFAULT_SEASON, LEAGUE_LABEL } from '@/config/football'
 import { usePlayer, usePlayers } from '@/hooks'
 import { aggregatePlayerStatistics } from '@/utils/player'
@@ -22,6 +23,8 @@ export function ComparePage() {
     isLoading: isPlayer1Loading,
     isError: isPlayer1Error,
     errorMessage: player1Error,
+    refetch: refetchPlayer1,
+    isFetching: isPlayer1Fetching,
   } = usePlayer({ id: player1Id ?? 0, season }, { enabled: player1Id !== null })
 
   const {
@@ -29,6 +32,8 @@ export function ComparePage() {
     isLoading: isPlayer2Loading,
     isError: isPlayer2Error,
     errorMessage: player2Error,
+    refetch: refetchPlayer2,
+    isFetching: isPlayer2Fetching,
   } = usePlayer({ id: player2Id ?? 0, season }, { enabled: player2Id !== null })
 
   const { players: player1Options } = usePlayers(
@@ -49,6 +54,7 @@ export function ComparePage() {
   const bothSelected = player1Id !== null && player2Id !== null
   const isLoading = bothSelected && (isPlayer1Loading || isPlayer2Loading)
   const isError = isPlayer1Error || isPlayer2Error
+  const isRetrying = isPlayer1Fetching || isPlayer2Fetching
 
   const comparisonData = useMemo(() => {
     if (!player1 || !player2) return []
@@ -58,6 +64,11 @@ export function ComparePage() {
       aggregatePlayerStatistics(player2.statistics),
     )
   }, [player1, player2])
+
+  const handleRetry = () => {
+    if (isPlayer1Error) refetchPlayer1()
+    if (isPlayer2Error) refetchPlayer2()
+  }
 
   return (
     <div className="space-y-8">
@@ -96,20 +107,19 @@ export function ComparePage() {
       </div>
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {player1Error ?? player2Error ?? 'Failed to load player data.'}
-          </AlertDescription>
-        </Alert>
+        <QueryError
+          message={player1Error ?? player2Error ?? 'Failed to load player data.'}
+          onRetry={handleRetry}
+          isRetrying={isRetrying}
+        />
       )}
 
       {!bothSelected && (
-        <div className="rounded-xl border border-dashed border-border py-16 text-center">
-          <p className="text-lg font-medium">Select two players to compare</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Use the search and dropdown above to choose each player.
-          </p>
-        </div>
+        <EmptyState
+          icon={GitCompareArrows}
+          title="Select two players to compare"
+          description="Use the search and dropdown above to choose each player."
+        />
       )}
 
       {bothSelected && player1 && player2 && (

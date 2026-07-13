@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Outlet } from 'react-router-dom'
+import { ErrorBoundary } from '@/components/feedback'
 import {
   Container,
   Footer,
@@ -25,7 +26,9 @@ export function RootLayout() {
         <div className="flex min-w-0 flex-1 flex-col">
           <main className="flex-1 py-6 sm:py-8">
             <Container as="section">
-              <Outlet />
+              <ErrorBoundary>
+                <Outlet />
+              </ErrorBoundary>
             </Container>
           </main>
 

@@ -1,5 +1,8 @@
 import { Heart } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { FavoritePlayerCard } from '@/components/favorites'
+import { EmptyState } from '@/components/feedback'
+import { Button } from '@/components/ui/button'
 import { useFavorites } from '@/hooks'
 
 export function FavoritesPage() {
@@ -17,14 +20,16 @@ export function FavoritesPage() {
       </div>
 
       {favorites.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border py-16 text-center">
-          <Heart className="mx-auto mb-3 size-10 text-muted-foreground" />
-          <p className="text-lg font-medium">No favorite players yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Save players from the Players or Player Details pages to see them
-            here.
-          </p>
-        </div>
+        <EmptyState
+          icon={Heart}
+          title="No favorite players yet"
+          description="Save players from the Players or Player Details pages to see them here."
+          action={
+            <Button asChild variant="outline">
+              <Link to="/players">Browse players</Link>
+            </Button>
+          }
+        />
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
