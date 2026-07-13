@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { FavoriteButton } from '@/components/favorites'
 import { Badge } from '@/components/ui/badge'
@@ -8,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { cn } from '@/lib/utils'
 import { useFavorites } from '@/hooks'
 import type { PlayerProfile } from '@/types/api-football'
@@ -18,7 +20,10 @@ type PlayerListCardProps = {
   className?: string
 }
 
-export function PlayerListCard({ profile, className }: PlayerListCardProps) {
+export const PlayerListCard = memo(function PlayerListCard({
+  profile,
+  className,
+}: PlayerListCardProps) {
   const { player } = profile
   const stats = getPrimaryStatistics(profile)
   const { isFavorite, toggleFavorite } = useFavorites()
@@ -38,11 +43,12 @@ export function PlayerListCard({ profile, className }: PlayerListCardProps) {
 
       <Link to={`/players/${player.id}`} className="group block h-full">
         <CardHeader className="flex flex-col items-center gap-4 p-4 pb-2 pt-10 text-center sm:flex-row sm:items-start sm:text-left">
-          <img
+          <LazyImage
             src={player.photo}
             alt={player.name}
+            width={80}
+            height={80}
             className="size-20 shrink-0 rounded-full border-2 border-border bg-muted object-cover"
-            loading="lazy"
           />
           <div className="min-w-0 flex-1 space-y-1">
             <CardTitle className="text-lg leading-tight group-hover:text-primary">
@@ -50,11 +56,12 @@ export function PlayerListCard({ profile, className }: PlayerListCardProps) {
             </CardTitle>
             {stats?.team && (
               <CardDescription className="flex items-center justify-center gap-2 sm:justify-start">
-                <img
+                <LazyImage
                   src={stats.team.logo}
                   alt=""
+                  width={20}
+                  height={20}
                   className="size-5 object-contain"
-                  loading="lazy"
                 />
                 <span className="truncate">{stats.team.name}</span>
               </CardDescription>
@@ -84,4 +91,4 @@ export function PlayerListCard({ profile, className }: PlayerListCardProps) {
       </Link>
     </Card>
   )
-}
+})

@@ -9,7 +9,7 @@ import {
   NotFoundPage,
   PlayerDetailPage,
   PlayersPage,
-} from '@/pages'
+} from '@/routes/lazy-pages'
 
 export const router = createBrowserRouter([
   {

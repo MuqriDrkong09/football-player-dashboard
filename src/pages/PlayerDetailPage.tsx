@@ -1,13 +1,17 @@
+import { lazy, useMemo, useState } from 'react'
 import { UserX } from 'lucide-react'
-import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { isApiError } from '@/api'
 import {
   PlayerProfileHeader,
-  PlayerStatsCharts,
   PlayerStatsGrid,
 } from '@/components/player-detail'
-import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
+import {
+  EmptyState,
+  LoadingSkeleton,
+  QueryError,
+  RouteSuspense,
+} from '@/components/feedback'
 import { Button } from '@/components/ui/button'
 import { usePlayer, usePlayerSeasons } from '@/hooks'
 import {
@@ -15,6 +19,12 @@ import {
   getCompetitionChartData,
   pickDefaultSeason,
 } from '@/utils/player'
+
+const PlayerStatsCharts = lazy(() =>
+  import('@/components/player-detail/PlayerStatsCharts').then((module) => ({
+    default: module.PlayerStatsCharts,
+  })),
+)
 
 export function PlayerDetailPage() {
   const { playerId } = useParams<{ playerId: string }>()
@@ -61,9 +71,7 @@ export function PlayerDetailPage() {
   const isLoading = isSeasonsLoading || isPlayerLoading || activeSeason === null
   const isError = isSeasonsError || isPlayerError
   const isNotFound =
-    isPlayerError &&
-    isApiError(playerError) &&
-    playerError.code === 'NOT_FOUND'
+    isPlayerError && isApiError(playerError) && playerError.code === 'NOT_FOUND'
   const isRetrying = isSeasonsFetching || isPlayerFetching
 
   const handleRetry = () => {
@@ -139,7 +147,11 @@ export function PlayerDetailPage() {
             <h2 className="text-xl font-bold tracking-tight">
               Performance Charts
             </h2>
-            <PlayerStatsCharts data={chartData} isLoading={false} />
+            <RouteSuspense
+              fallback={<LoadingSkeleton variant="list" count={3} />}
+            >
+              <PlayerStatsCharts data={chartData} isLoading={false} />
+            </RouteSuspense>
           </section>
         </>
       )}

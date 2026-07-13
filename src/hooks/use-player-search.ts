@@ -1,5 +1,6 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { getErrorMessage } from '@/api'
+import { SEARCH_GC_TIME, SEARCH_STALE_TIME } from '@/lib/query-client'
 import { queryKeys } from '@/lib/query-keys'
 import { searchPlayers } from '@/services/players.service'
 import type {
@@ -17,8 +18,6 @@ type UsePlayerSearchOptions = Omit<
   minChars?: number
 }
 
-const SEARCH_STALE_TIME = 1000 * 60
-
 export function usePlayerSearch(
   params: SearchPlayersParams,
   options?: UsePlayerSearchOptions,
@@ -32,6 +31,7 @@ export function usePlayerSearch(
     queryFn: () => searchPlayers({ ...params, search: trimmedSearch }),
     enabled: isEnabled,
     staleTime: SEARCH_STALE_TIME,
+    gcTime: SEARCH_GC_TIME,
     ...queryOptions,
   })
 

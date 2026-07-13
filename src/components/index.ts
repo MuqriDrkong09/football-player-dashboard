@@ -23,6 +23,7 @@ export {
 } from './ui/dialog'
 export { Input } from './ui/input'
 export { Label } from './ui/label'
+export { LazyImage } from './ui/lazy-image'
 export {
   Pagination,
   PaginationContent,

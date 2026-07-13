@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useFavorites } from '@/hooks'
 import type { PlayerProfile } from '@/types/api-football'
@@ -95,9 +96,12 @@ export function PlayerProfileHeader({
 
       <CardContent className="p-6">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-          <img
+          <LazyImage
             src={player.photo}
             alt={player.name}
+            width={128}
+            height={128}
+            priority
             className="size-32 shrink-0 rounded-full border-4 border-primary/20 bg-muted object-cover shadow-md"
           />
 
@@ -140,16 +144,20 @@ export function PlayerProfileHeader({
                       </p>
                       <div className="mt-1 flex items-center gap-2">
                         {item.label === 'Team' && stats?.team?.logo && (
-                          <img
+                          <LazyImage
                             src={stats.team.logo}
                             alt=""
+                            width={20}
+                            height={20}
                             className="size-5 object-contain"
                           />
                         )}
                         {item.label === 'League' && stats?.league?.logo && (
-                          <img
+                          <LazyImage
                             src={stats.league.logo}
                             alt=""
+                            width={20}
+                            height={20}
                             className="size-5 object-contain"
                           />
                         )}

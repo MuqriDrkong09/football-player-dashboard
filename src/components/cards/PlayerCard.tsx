@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { FavoriteButton } from '@/components/favorites'
 import { Badge } from '@/components/ui/badge'
@@ -8,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { cn } from '@/lib/utils'
 import { useFavorites } from '@/hooks'
 import type { PlayerProfile } from '@/types/api-football'
@@ -19,7 +21,11 @@ type PlayerCardProps = {
   className?: string
 }
 
-export function PlayerCard({ profile, highlight, className }: PlayerCardProps) {
+export const PlayerCard = memo(function PlayerCard({
+  profile,
+  highlight,
+  className,
+}: PlayerCardProps) {
   const { player } = profile
   const stats = getPrimaryStatistics(profile)
   const goals = stats?.goals?.total ?? 0
@@ -41,11 +47,12 @@ export function PlayerCard({ profile, highlight, className }: PlayerCardProps) {
 
       <Link to={`/players/${player.id}`} className="group block h-full">
         <CardHeader className="flex-row items-center gap-4 space-y-0 p-4 pb-2 pt-10">
-          <img
+          <LazyImage
             src={player.photo}
             alt={player.name}
+            width={64}
+            height={64}
             className="size-16 rounded-full border border-border bg-muted object-cover"
-            loading="lazy"
           />
           <div className="min-w-0 flex-1">
             <CardTitle className="truncate text-base group-hover:text-primary">
@@ -60,11 +67,12 @@ export function PlayerCard({ profile, highlight, className }: PlayerCardProps) {
         <CardContent className="space-y-3 p-4 pt-2">
           {stats?.team && (
             <div className="flex items-center gap-2">
-              <img
+              <LazyImage
                 src={stats.team.logo}
                 alt=""
+                width={20}
+                height={20}
                 className="size-5 object-contain"
-                loading="lazy"
               />
               <span className="truncate text-sm text-muted-foreground">
                 {stats.team.name}
@@ -94,4 +102,4 @@ export function PlayerCard({ profile, highlight, className }: PlayerCardProps) {
       </Link>
     </Card>
   )
-}
+})

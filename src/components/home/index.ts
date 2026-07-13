@@ -1,5 +1,1 @@
-export { FeaturedPlayersSection } from './FeaturedPlayersSection'
 export { HeroSection } from './HeroSection'
-export { PopularTeamsSection } from './PopularTeamsSection'
-export { TopAssistsSection } from './TopAssistsSection'
-export { TopScorersSection } from './TopScorersSection'

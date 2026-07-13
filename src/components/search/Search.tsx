@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RetryButton } from '@/components/feedback/RetryButton'
 import { DEFAULT_LEAGUE_ID, DEFAULT_SEASON } from '@/config/football'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { useDebounce } from '@/hooks/use-debounce'
 import { usePlayerSearch } from '@/hooks/use-player-search'
 import { cn } from '@/lib/utils'
@@ -321,11 +322,12 @@ export function Search({
                   onMouseEnter={() => setActiveIndex(index)}
                   onClick={() => handleSelect(profile)}
                 >
-                  <img
+                  <LazyImage
                     src={player.photo}
                     alt=""
+                    width={32}
+                    height={32}
                     className="size-8 rounded-full border border-border bg-muted object-cover"
-                    loading="lazy"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{player.name}</p>

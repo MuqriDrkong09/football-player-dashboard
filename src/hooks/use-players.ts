@@ -1,4 +1,4 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { getErrorMessage } from '@/api'
 import { queryKeys } from '@/lib/query-keys'
 import { getPlayers } from '@/services/players.service'
@@ -22,6 +22,7 @@ export function usePlayers(
   const query = useQuery({
     queryKey: queryKeys.players.list(params),
     queryFn: () => getPlayers(params),
+    placeholderData: keepPreviousData,
     ...options,
   })
 

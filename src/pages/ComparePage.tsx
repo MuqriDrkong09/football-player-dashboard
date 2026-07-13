@@ -1,12 +1,23 @@
 import { GitCompareArrows } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { ComparisonCharts, PlayerCompareSelector } from '@/components/compare'
-import { EmptyState, QueryError } from '@/components/feedback'
+import { lazy, useMemo, useState } from 'react'
+import { PlayerCompareSelector } from '@/components/compare/PlayerCompareSelector'
+import {
+  EmptyState,
+  LoadingSkeleton,
+  QueryError,
+  RouteSuspense,
+} from '@/components/feedback'
 import { SeasonSelector } from '@/components/player-detail/SeasonSelector'
 import { DEFAULT_SEASON, LEAGUE_LABEL } from '@/config/football'
 import { usePlayer, usePlayers } from '@/hooks'
 import { aggregatePlayerStatistics } from '@/utils/player'
 import { buildComparisonChartData } from '@/utils/compare'
+
+const ComparisonCharts = lazy(() =>
+  import('@/components/compare/ComparisonCharts').then((module) => ({
+    default: module.ComparisonCharts,
+  })),
+)
 
 export function ComparePage() {
   const [season, setSeason] = useState(DEFAULT_SEASON)
@@ -108,7 +119,9 @@ export function ComparePage() {
 
       {isError && (
         <QueryError
-          message={player1Error ?? player2Error ?? 'Failed to load player data.'}
+          message={
+            player1Error ?? player2Error ?? 'Failed to load player data.'
+          }
           onRetry={handleRetry}
           isRetrying={isRetrying}
         />
@@ -123,12 +136,14 @@ export function ComparePage() {
       )}
 
       {bothSelected && player1 && player2 && (
-        <ComparisonCharts
-          data={comparisonData}
-          player1Name={player1.player.name}
-          player2Name={player2.player.name}
-          isLoading={isLoading}
-        />
+        <RouteSuspense fallback={<LoadingSkeleton variant="list" count={3} />}>
+          <ComparisonCharts
+            data={comparisonData}
+            player1Name={player1.player.name}
+            player2Name={player2.player.name}
+            isLoading={isLoading}
+          />
+        </RouteSuspense>
       )}
     </div>
   )

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { ErrorBoundary } from '@/components/feedback'
+import { ErrorBoundary, RouteSuspense } from '@/components/feedback'
 import {
   Container,
   Footer,
@@ -27,7 +27,9 @@ export function RootLayout() {
           <main className="flex-1 py-6 sm:py-8">
             <Container as="section">
               <ErrorBoundary>
-                <Outlet />
+                <RouteSuspense>
+                  <Outlet />
+                </RouteSuspense>
               </ErrorBoundary>
             </Container>
           </main>

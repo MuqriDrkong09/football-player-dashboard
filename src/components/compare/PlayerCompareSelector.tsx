@@ -1,5 +1,6 @@
 import { Search, X } from 'lucide-react'
 import { useMemo, useState, type FormEvent } from 'react'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -134,9 +135,11 @@ export function PlayerCompareSelector({
 
         {selectedPlayer && (
           <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-3">
-            <img
+            <LazyImage
               src={selectedPlayer.player.photo}
               alt={selectedPlayer.player.name}
+              width={56}
+              height={56}
               className="size-14 rounded-full border border-border object-cover"
             />
             <div className="min-w-0 flex-1">

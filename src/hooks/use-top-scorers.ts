@@ -1,5 +1,6 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { getErrorMessage } from '@/api'
+import { LEADERBOARD_STALE_TIME } from '@/lib/query-client'
 import { queryKeys } from '@/lib/query-keys'
 import { getTopScorers } from '@/services/players.service'
 import type {
@@ -23,6 +24,7 @@ export function useTopScorers(
     queryKey: queryKeys.players.topScorers(params),
     queryFn: () => getTopScorers(params),
     enabled: !!params.league && !!params.season,
+    staleTime: LEADERBOARD_STALE_TIME,
     ...options,
   })
 

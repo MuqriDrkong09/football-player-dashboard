@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Card,
@@ -6,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { cn } from '@/lib/utils'
 import type { Team } from '@/types/api-football'
 
@@ -14,7 +16,10 @@ type TeamCardProps = {
   className?: string
 }
 
-export function TeamCard({ team, className }: TeamCardProps) {
+export const TeamCard = memo(function TeamCard({
+  team,
+  className,
+}: TeamCardProps) {
   return (
     <Link to="/players" className="group block h-full">
       <Card
@@ -24,11 +29,12 @@ export function TeamCard({ team, className }: TeamCardProps) {
         )}
       >
         <CardHeader className="items-center space-y-3 p-6 text-center">
-          <img
+          <LazyImage
             src={team.team.logo}
             alt={team.team.name}
+            width={64}
+            height={64}
             className="mx-auto size-16 object-contain"
-            loading="lazy"
           />
           <div>
             <CardTitle className="text-base group-hover:text-primary">
@@ -50,4 +56,4 @@ export function TeamCard({ team, className }: TeamCardProps) {
       </Card>
     </Link>
   )
-}
+})

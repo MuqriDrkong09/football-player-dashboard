@@ -1,4 +1,5 @@
 import { Heart, Trash2 } from 'lucide-react'
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { cn } from '@/lib/utils'
 import type { FavoritePlayer } from '@/store/favorites'
 
@@ -18,7 +20,7 @@ type FavoritePlayerCardProps = {
   className?: string
 }
 
-export function FavoritePlayerCard({
+export const FavoritePlayerCard = memo(function FavoritePlayerCard({
   player,
   onRemove,
   className,
@@ -43,11 +45,12 @@ export function FavoritePlayerCard({
 
       <Link to={`/players/${player.id}`} className="group block h-full">
         <CardHeader className="flex flex-col items-center gap-4 p-4 pb-2 pt-10 text-center sm:flex-row sm:items-start sm:text-left">
-          <img
+          <LazyImage
             src={player.photo}
             alt={player.name}
+            width={80}
+            height={80}
             className="size-20 shrink-0 rounded-full border-2 border-border bg-muted object-cover"
-            loading="lazy"
           />
           <div className="min-w-0 flex-1 space-y-1">
             <CardTitle className="text-lg leading-tight group-hover:text-primary">
@@ -56,11 +59,12 @@ export function FavoritePlayerCard({
             {player.teamName && (
               <CardDescription className="flex items-center justify-center gap-2 sm:justify-start">
                 {player.teamLogo && (
-                  <img
+                  <LazyImage
                     src={player.teamLogo}
                     alt=""
+                    width={20}
+                    height={20}
                     className="size-5 object-contain"
-                    loading="lazy"
                   />
                 )}
                 <span className="truncate">{player.teamName}</span>
@@ -85,7 +89,7 @@ export function FavoritePlayerCard({
       </Link>
     </Card>
   )
-}
+})
 
 type FavoriteButtonProps = {
   isFavorite: boolean
@@ -94,7 +98,7 @@ type FavoriteButtonProps = {
   size?: 'default' | 'sm' | 'icon'
 }
 
-export function FavoriteButton({
+export const FavoriteButton = memo(function FavoriteButton({
   isFavorite,
   onClick,
   className,
@@ -121,4 +125,4 @@ export function FavoriteButton({
       {size !== 'icon' && <span>{isFavorite ? 'Saved' : 'Save player'}</span>}
     </Button>
   )
-}
+})

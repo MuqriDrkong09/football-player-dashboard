@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { LoadingSkeleton, QueryError } from '@/components/feedback'
+import { LazyImage } from '@/components/ui/lazy-image'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -189,11 +190,12 @@ export function LeaderboardTable({
                       to={`/players/${row.playerId}`}
                       className="group flex items-center gap-3"
                     >
-                      <img
+                      <LazyImage
                         src={row.photo}
                         alt=""
+                        width={36}
+                        height={36}
                         className="size-9 shrink-0 rounded-full border border-border bg-muted object-cover"
-                        loading="lazy"
                       />
                       <span className="truncate font-medium group-hover:text-primary">
                         {row.name}
@@ -217,11 +219,12 @@ export function LeaderboardTable({
                         {column.key === 'team' ? (
                           <div className="flex items-center gap-2">
                             {row.teamLogo && (
-                              <img
+                              <LazyImage
                                 src={row.teamLogo}
                                 alt=""
+                                width={20}
+                                height={20}
                                 className="size-5 object-contain"
-                                loading="lazy"
                               />
                             )}
                             <span className="truncate">{value}</span>
