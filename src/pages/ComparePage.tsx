@@ -7,8 +7,10 @@ import {
   QueryError,
   RouteSuspense,
 } from '@/components/feedback'
+import { PageShell } from '@/components/layout'
 import { SeasonSelector } from '@/components/player-detail/SeasonSelector'
 import { DEFAULT_SEASON, LEAGUE_LABEL } from '@/config/football'
+import { PAGE_META } from '@/config/seo'
 import { usePlayer, usePlayers } from '@/hooks'
 import { aggregatePlayerStatistics } from '@/utils/player'
 import { buildComparisonChartData } from '@/utils/compare'
@@ -82,20 +84,13 @@ export function ComparePage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Compare Players
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-            Select two players from the {LEAGUE_LABEL} to compare their season
-            statistics.
-          </p>
-        </div>
+    <PageShell
+      {...PAGE_META.compare}
+      description={`Select two players from the ${LEAGUE_LABEL} to compare their season statistics.`}
+      actions={
         <SeasonSelector seasons={seasons} value={season} onChange={setSeason} />
-      </div>
-
+      }
+    >
       <div className="grid gap-6 lg:grid-cols-2">
         <PlayerCompareSelector
           label="Player 1"
@@ -145,6 +140,6 @@ export function ComparePage() {
           />
         </RouteSuspense>
       )}
-    </div>
+    </PageShell>
   )
 }

@@ -1,4 +1,5 @@
 export { useDebounce } from './use-debounce'
+export { usePageMeta } from './use-page-meta'
 export { useTheme } from './use-theme'
 export { useFavorites } from '@/providers/FavoritesProvider'
 export { usePlayer } from './use-player'

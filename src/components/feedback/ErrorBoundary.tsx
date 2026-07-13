@@ -2,6 +2,7 @@ import { AlertTriangle } from 'lucide-react'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { RetryButton } from '@/components/feedback/RetryButton'
+import { notify } from '@/lib/notify'
 
 type ErrorBoundaryProps = {
   children: ReactNode
@@ -28,10 +29,15 @@ export class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, info.componentStack)
+    notify.error(
+      'Unexpected error',
+      error.message || 'An unexpected error occurred while rendering this page.',
+    )
   }
 
   handleReset = () => {
     this.setState({ hasError: false, error: null })
+    notify.info('Section reloaded')
   }
 
   render() {

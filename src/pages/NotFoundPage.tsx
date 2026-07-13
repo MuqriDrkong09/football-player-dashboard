@@ -2,8 +2,12 @@ import { FileQuestion } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { EmptyState } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
+import { PAGE_META } from '@/config/seo'
+import { usePageMeta } from '@/hooks'
 
 export function NotFoundPage() {
+  usePageMeta(PAGE_META.notFound)
+
   return (
     <EmptyState
       icon={FileQuestion}

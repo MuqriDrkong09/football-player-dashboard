@@ -7,6 +7,7 @@ type NavLinksProps = {
   orientation?: 'horizontal' | 'vertical'
   onNavigate?: () => void
   className?: string
+  ariaLabel?: string
 }
 
 export function NavLinks({
@@ -14,6 +15,7 @@ export function NavLinks({
   orientation = 'horizontal',
   onNavigate,
   className,
+  ariaLabel = 'Main navigation',
 }: NavLinksProps) {
   return (
     <nav
@@ -23,7 +25,7 @@ export function NavLinks({
           : 'flex flex-col gap-1',
         className,
       )}
-      aria-label="Main navigation"
+      aria-label={ariaLabel}
     >
       {items.map(({ label, href, icon: Icon }) => (
         <NavLink

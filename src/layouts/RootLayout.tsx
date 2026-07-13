@@ -6,7 +6,9 @@ import {
   Footer,
   MobileNav,
   Navbar,
+  PageTransition,
   Sidebar,
+  SkipLink,
 } from '@/components/layout'
 
 export function RootLayout() {
@@ -17,6 +19,7 @@ export function RootLayout() {
 
   return (
     <div className="flex min-h-svh flex-col bg-background text-foreground">
+      <SkipLink />
       <Navbar onMenuClick={openMobileNav} />
       <MobileNav open={mobileNavOpen} onClose={closeMobileNav} />
 
@@ -24,11 +27,17 @@ export function RootLayout() {
         <Sidebar />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <main className="flex-1 py-6 sm:py-8">
-            <Container as="section">
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="flex-1 scroll-mt-16 py-5 outline-none sm:py-8"
+          >
+            <Container>
               <ErrorBoundary>
                 <RouteSuspense>
-                  <Outlet />
+                  <PageTransition>
+                    <Outlet />
+                  </PageTransition>
                 </RouteSuspense>
               </ErrorBoundary>
             </Container>

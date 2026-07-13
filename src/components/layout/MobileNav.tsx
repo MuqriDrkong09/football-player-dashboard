@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { sidebarNavItems } from '@/config/navigation'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
@@ -15,6 +15,9 @@ type MobileNavProps = {
 
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const location = useLocation()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const titleId = useId()
 
   useEffect(() => {
     onClose()
@@ -27,11 +30,52 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
     }
   }, [open])
 
+  useEffect(() => {
+    if (!open) return
+
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+        return
+      }
+
+      if (event.key !== 'Tab' || !panelRef.current) return
+
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
+      )
+
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      previouslyFocused?.focus()
+    }
+  }, [open, onClose])
+
   return (
     <>
       <div
         className={cn(
-          'fixed inset-0 z-50 bg-black/60 transition-opacity lg:hidden',
+          'fixed inset-0 z-50 bg-black/60 transition-opacity duration-300 lg:hidden',
           open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
         onClick={onClose}
@@ -39,23 +83,28 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
       />
 
       <div
+        ref={panelRef}
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex w-[min(85vw,20rem)] flex-col border-r border-sidebar-border bg-sidebar shadow-xl transition-transform duration-300 ease-in-out lg:hidden',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile navigation"
+        aria-labelledby={titleId}
+        aria-hidden={!open}
       >
         <div className="flex h-14 items-center justify-between border-b border-sidebar-border px-4 sm:h-16">
-          <Logo showText />
+          <div id={titleId}>
+            <Logo showText />
+          </div>
           <Button
+            ref={closeButtonRef}
             variant="ghost"
             size="icon"
             onClick={onClose}
             aria-label="Close navigation menu"
           >
-            <X className="size-5" />
+            <X className="size-5" aria-hidden="true" />
           </Button>
         </div>
 
@@ -64,6 +113,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
             items={sidebarNavItems}
             orientation="vertical"
             onNavigate={onClose}
+            ariaLabel="Mobile navigation"
           />
         </div>
 

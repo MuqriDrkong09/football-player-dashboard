@@ -1,6 +1,9 @@
 import { lazy } from 'react'
 import { HeroSection } from '@/components/home/HeroSection'
 import { LoadingSkeleton, RouteSuspense } from '@/components/feedback'
+import { FadeIn } from '@/components/motion'
+import { PAGE_META } from '@/config/seo'
+import { usePageMeta } from '@/hooks'
 
 const FeaturedPlayersSection = lazy(() =>
   import('@/components/home/FeaturedPlayersSection').then((module) => ({
@@ -27,24 +30,38 @@ const PopularTeamsSection = lazy(() =>
 )
 
 export function HomePage() {
+  usePageMeta(PAGE_META.home)
+
   return (
     <div className="space-y-12 sm:space-y-16">
-      <HeroSection />
+      <FadeIn>
+        <HeroSection />
+      </FadeIn>
+
       <RouteSuspense
         fallback={<LoadingSkeleton variant="card-grid" count={6} />}
       >
-        <FeaturedPlayersSection />
+        <FadeIn delayMs={60}>
+          <FeaturedPlayersSection />
+        </FadeIn>
       </RouteSuspense>
+
       <RouteSuspense
         fallback={<LoadingSkeleton variant="card-grid" count={6} />}
       >
-        <TopScorersSection />
+        <FadeIn delayMs={100}>
+          <TopScorersSection />
+        </FadeIn>
       </RouteSuspense>
+
       <RouteSuspense
         fallback={<LoadingSkeleton variant="card-grid" count={6} />}
       >
-        <TopAssistsSection />
+        <FadeIn delayMs={140}>
+          <TopAssistsSection />
+        </FadeIn>
       </RouteSuspense>
+
       <RouteSuspense
         fallback={
           <LoadingSkeleton
@@ -55,7 +72,9 @@ export function HomePage() {
           />
         }
       >
-        <PopularTeamsSection />
+        <FadeIn delayMs={180}>
+          <PopularTeamsSection />
+        </FadeIn>
       </RouteSuspense>
     </div>
   )

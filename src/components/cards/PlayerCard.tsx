@@ -35,7 +35,7 @@ export const PlayerCard = memo(function PlayerCard({
   return (
     <Card
       className={cn(
-        'relative h-full transition-all hover:border-primary/40 hover:shadow-md',
+        'relative h-full transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md',
         className,
       )}
     >

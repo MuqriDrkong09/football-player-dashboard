@@ -13,7 +13,8 @@ import {
   RouteSuspense,
 } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
-import { usePlayer, usePlayerSeasons } from '@/hooks'
+import { PAGE_META } from '@/config/seo'
+import { usePageMeta, usePlayer, usePlayerSeasons } from '@/hooks'
 import {
   aggregatePlayerStatistics,
   getCompetitionChartData,
@@ -73,6 +74,13 @@ export function PlayerDetailPage() {
   const isNotFound =
     isPlayerError && isApiError(playerError) && playerError.code === 'NOT_FOUND'
   const isRetrying = isSeasonsFetching || isPlayerFetching
+
+  usePageMeta({
+    title: player?.player.name ?? PAGE_META.playerDetail.title,
+    description: player
+      ? `Season stats and charts for ${player.player.name}.`
+      : PAGE_META.playerDetail.description,
+  })
 
   const handleRetry = () => {
     if (isSeasonsError) refetchSeasons()

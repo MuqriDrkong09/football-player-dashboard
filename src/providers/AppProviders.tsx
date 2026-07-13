@@ -14,7 +14,7 @@ export function AppProviders({ children }: AppProvidersProps) {
       <FavoritesProvider>
         <QueryProvider>
           {children}
-          <Toaster richColors closeButton position="top-right" />
+          <Toaster richColors closeButton position="top-right" expand />
         </QueryProvider>
       </FavoritesProvider>
     </ThemeProvider>

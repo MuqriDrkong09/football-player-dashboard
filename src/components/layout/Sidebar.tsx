@@ -22,7 +22,11 @@ export function Sidebar({ className }: SidebarProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <NavLinks items={sidebarNavItems} orientation="vertical" />
+        <NavLinks
+          items={sidebarNavItems}
+          orientation="vertical"
+          ariaLabel="Sidebar navigation"
+        />
       </div>
 
       <div className="border-t border-sidebar-border p-4">

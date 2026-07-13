@@ -2,23 +2,16 @@ import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { FavoritePlayerCard } from '@/components/favorites'
 import { EmptyState } from '@/components/feedback'
+import { PageShell } from '@/components/layout'
 import { Button } from '@/components/ui/button'
+import { PAGE_META } from '@/config/seo'
 import { useFavorites } from '@/hooks'
 
 export function FavoritesPage() {
   const { favorites, removeFavorite } = useFavorites()
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Favorites
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-          Your saved players are stored locally in this browser.
-        </p>
-      </div>
-
+    <PageShell {...PAGE_META.favorites}>
       {favorites.length === 0 ? (
         <EmptyState
           icon={Heart}
@@ -46,6 +39,6 @@ export function FavoritesPage() {
           </div>
         </>
       )}
-    </div>
+    </PageShell>
   )
 }

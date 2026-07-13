@@ -28,7 +28,7 @@ export const FavoritePlayerCard = memo(function FavoritePlayerCard({
   return (
     <Card
       className={cn(
-        'relative h-full overflow-hidden transition-all hover:border-primary/40 hover:shadow-md',
+        'relative h-full overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md',
         className,
       )}
     >

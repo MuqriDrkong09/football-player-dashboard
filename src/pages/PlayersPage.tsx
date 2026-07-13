@@ -13,7 +13,8 @@ import {
   LEAGUE_LABEL,
 } from '@/config/football'
 import type { PlayerPosition } from '@/config/players'
-import { useDebounce, usePlayers, useTeams } from '@/hooks'
+import { useDebounce, usePageMeta, usePlayers, useTeams } from '@/hooks'
+import { PAGE_META } from '@/config/seo'
 import type { GetPlayersParams, PlayerProfile } from '@/types/api-football'
 import {
   filterPlayersByNationality,
@@ -29,6 +30,7 @@ const INITIAL_FILTERS: PlayersFilterState = {
 }
 
 export function PlayersPage() {
+  usePageMeta(PAGE_META.players)
   const navigate = useNavigate()
   const [filters, setFilters] = useState<PlayersFilterState>(INITIAL_FILTERS)
   const [page, setPage] = useState(1)

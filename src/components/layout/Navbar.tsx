@@ -31,6 +31,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           items={mainNavItems}
           orientation="horizontal"
           className="hidden lg:flex"
+          ariaLabel="Primary navigation"
         />
 
         <div className="flex items-center gap-1">
