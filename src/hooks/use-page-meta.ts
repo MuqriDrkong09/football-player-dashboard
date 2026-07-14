@@ -1,9 +1,5 @@
 import { useEffect } from 'react'
-import {
-  formatDocumentTitle,
-  SEO_DEFAULTS,
-  type PageMeta,
-} from '@/config/seo'
+import { formatDocumentTitle, SEO_DEFAULTS, type PageMeta } from '@/config/seo'
 
 function upsertMeta(
   attribute: 'name' | 'property',
@@ -34,7 +30,11 @@ export function usePageMeta({
     document.title = formattedTitle
     upsertMeta('name', 'description', description)
     upsertMeta('name', 'keywords', SEO_DEFAULTS.keywords)
-    upsertMeta('name', 'robots', noIndex ? 'noindex, nofollow' : 'index, follow')
+    upsertMeta(
+      'name',
+      'robots',
+      noIndex ? 'noindex, nofollow' : 'index, follow',
+    )
     upsertMeta('property', 'og:title', formattedTitle)
     upsertMeta('property', 'og:description', description)
     upsertMeta('property', 'og:type', 'website')

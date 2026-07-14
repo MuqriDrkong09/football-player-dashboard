@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 
 type SectionHeaderProps = {
   title: string
+  titleId?: string
   description?: string
   action?: ReactNode
   className?: string
@@ -10,6 +11,7 @@ type SectionHeaderProps = {
 
 export function SectionHeader({
   title,
+  titleId,
   description,
   action,
   className,
@@ -22,7 +24,10 @@ export function SectionHeader({
       )}
     >
       <div>
-        <h2 className="text-xl font-bold tracking-tight sm:text-2xl">
+        <h2
+          id={titleId}
+          className="text-xl font-bold tracking-tight sm:text-2xl"
+        >
           {title}
         </h2>
         {description && (

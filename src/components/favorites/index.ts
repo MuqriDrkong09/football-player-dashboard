@@ -1,1 +1,2 @@
-export { FavoriteButton, FavoritePlayerCard } from './FavoritePlayerCard'
+export { FavoriteButton } from './FavoriteButton'
+export { FavoritePlayerCard } from './FavoritePlayerCard'

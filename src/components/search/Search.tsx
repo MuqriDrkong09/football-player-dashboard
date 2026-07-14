@@ -40,6 +40,7 @@ export type SearchProps = {
   autoFocus?: boolean
   id?: string
   name?: string
+  'aria-label'?: string
 }
 
 export function Search({
@@ -60,6 +61,7 @@ export function Search({
   autoFocus = false,
   id,
   name,
+  'aria-label': ariaLabel = 'Search players',
 }: SearchProps) {
   const listboxId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -107,19 +109,21 @@ export function Search({
 
   const suggestions = players.slice(0, maxSuggestions)
   const showDropdown = isOpen && query.length > 0
-  const isSearching =
-    isDebouncing || (canSearch && (isLoading || isFetching))
+  const isSearching = isDebouncing || (canSearch && (isLoading || isFetching))
+  const suggestionResetKey = `${trimmedQuery}:${suggestions.length}`
+  const [trackedSuggestionKey, setTrackedSuggestionKey] =
+    useState(suggestionResetKey)
 
-  useEffect(() => {
+  if (trackedSuggestionKey !== suggestionResetKey) {
+    setTrackedSuggestionKey(suggestionResetKey)
     setActiveIndex(-1)
-  }, [trimmedQuery, suggestions.length])
+  }
 
   useEffect(() => {
     if (activeIndex < 0 || !listRef.current) return
 
     const item = listRef.current.children[activeIndex] as
-      | HTMLElement
-      | undefined
+      HTMLElement | undefined
 
     item?.scrollIntoView({ block: 'nearest' })
   }, [activeIndex])
@@ -220,6 +224,7 @@ export function Search({
             activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
           }
           aria-autocomplete="list"
+          aria-label={ariaLabel}
           autoComplete="off"
           className={cn('pr-16 pl-9', inputClassName)}
         />
@@ -259,13 +264,19 @@ export function Search({
             className="max-h-72 overflow-y-auto py-1"
           >
             {!canSearch && (
-              <li className="px-3 py-2 text-sm text-muted-foreground" role="status">
+              <li
+                className="px-3 py-2 text-sm text-muted-foreground"
+                role="status"
+              >
                 Type at least {minChars} characters to search
               </li>
             )}
 
             {canSearch && isSearching && suggestions.length === 0 && (
-              <li className="px-3 py-2 text-sm text-muted-foreground" role="status">
+              <li
+                className="px-3 py-2 text-sm text-muted-foreground"
+                role="status"
+              >
                 Searching players…
               </li>
             )}

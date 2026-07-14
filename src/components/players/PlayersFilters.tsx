@@ -67,6 +67,7 @@ export function PlayersFilters({
         onSelect={onPlayerSelect}
         team={filters.teamId !== 'all' ? Number(filters.teamId) : undefined}
         placeholder="Search by player name (min. 3 characters)…"
+        aria-label="Search players by name"
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -34,15 +34,15 @@ export default defineConfig({
             return 'vendor-query'
           }
 
-          if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) {
+          if (
+            id.includes('recharts') ||
+            id.includes('d3-') ||
+            id.includes('victory')
+          ) {
             return 'vendor-charts'
           }
 
-          if (id.includes('@mui') || id.includes('@emotion')) {
-            return 'vendor-mui'
-          }
-
-          if (id.includes('axios') || id.includes('zod') || id.includes('lucide')) {
+          if (id.includes('axios') || id.includes('lucide')) {
             return 'vendor-utils'
           }
         },

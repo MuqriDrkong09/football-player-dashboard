@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import { LeaderboardPanel } from '@/components/leaderboards'
 import { PageShell } from '@/components/layout'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DEFAULT_SEASON, LEAGUE_LABEL } from '@/config/football'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  DEFAULT_SEASON,
+  formatSeasonLabel,
+  LEAGUE_LABEL,
+} from '@/config/football'
 import {
   getLeaderboardTab,
+  isLeaderboardTabValue,
   LEADERBOARD_TABS,
   type LeaderboardTabValue,
 } from '@/config/leaderboards'
@@ -17,11 +22,15 @@ export function LeaderboardsPage() {
   return (
     <PageShell
       {...PAGE_META.leaderboards}
-      description={`Top performers in the ${LEAGUE_LABEL} · ${DEFAULT_SEASON}/${String(DEFAULT_SEASON + 1).slice(2)}`}
+      description={`Top performers in the ${LEAGUE_LABEL} · ${formatSeasonLabel(DEFAULT_SEASON)}`}
     >
       <Tabs
         value={activeTab}
-        onValueChange={(value) => setActiveTab(value as LeaderboardTabValue)}
+        onValueChange={(value) => {
+          if (isLeaderboardTabValue(value)) {
+            setActiveTab(value)
+          }
+        }}
         className="space-y-4"
       >
         <div className="-mx-1 overflow-x-auto px-1 pb-1 sm:mx-0 sm:overflow-visible sm:px-0">
@@ -38,10 +47,16 @@ export function LeaderboardsPage() {
           </TabsList>
         </div>
 
-        <p className="text-sm text-muted-foreground">{currentTab.description}</p>
-      </Tabs>
+        <p className="text-sm text-muted-foreground">
+          {currentTab.description}
+        </p>
 
-      <LeaderboardPanel tab={currentTab} />
+        {LEADERBOARD_TABS.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value} className="mt-0">
+            {tab.value === activeTab ? <LeaderboardPanel tab={tab} /> : null}
+          </TabsContent>
+        ))}
+      </Tabs>
     </PageShell>
   )
 }

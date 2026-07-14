@@ -1,11 +1,8 @@
-// Utility functions
 export {
   aggregatePlayerStatistics,
   filterPlayersByNationality,
   filterPlayersByPosition,
   getCompetitionChartData,
-  getPlayerAssists,
-  getPlayerGoals,
   getPrimaryStatistics,
   getUniqueNationalities,
   pickDefaultSeason,
@@ -18,3 +15,13 @@ export {
   getBetterPlayer,
 } from './compare'
 export type { ComparisonChartRow, ComparisonStatKey } from './compare'
+export {
+  buildLeaderboardRows,
+  LEADERBOARD_COLUMNS,
+  sortLeaderboardRows,
+} from './leaderboard'
+export type {
+  LeaderboardRow,
+  LeaderboardSortKey,
+  SortDirection,
+} from './leaderboard'

@@ -1,7 +1,11 @@
 import { ArrowRight, Search } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { LEAGUE_LABEL } from '@/config/football'
+import {
+  DEFAULT_SEASON,
+  formatSeasonLabel,
+  LEAGUE_LABEL,
+} from '@/config/football'
 
 export function HeroSection() {
   return (
@@ -11,7 +15,7 @@ export function HeroSection() {
 
       <div className="relative mx-auto max-w-2xl text-center">
         <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-primary">
-          {LEAGUE_LABEL} · Season 2024/25
+          {LEAGUE_LABEL} · Season {formatSeasonLabel(DEFAULT_SEASON)}
         </p>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
           Your Football Player <span className="text-primary">Dashboard</span>

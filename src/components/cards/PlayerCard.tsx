@@ -42,6 +42,7 @@ export const PlayerCard = memo(function PlayerCard({
       <FavoriteButton
         isFavorite={isFavorite(player.id)}
         onClick={() => toggleFavorite(profile)}
+        playerName={player.name}
         className="absolute right-2 top-2 z-10"
       />
 

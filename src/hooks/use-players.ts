@@ -1,4 +1,8 @@
-import { keepPreviousData, useQuery, type UseQueryOptions } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useQuery,
+  type UseQueryOptions,
+} from '@tanstack/react-query'
 import { getErrorMessage } from '@/api'
 import { queryKeys } from '@/lib/query-keys'
 import { getPlayers } from '@/services/players.service'

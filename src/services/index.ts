@@ -2,14 +2,8 @@ export {
   getPlayer,
   getPlayers,
   getPlayerSeasons,
-  getPlayerStatistics,
-  getTopAssists,
-  getTopRedCards,
-  getTopScorers,
-  getTopYellowCards,
+  getTopPlayers,
   searchPlayers,
 } from './players.service'
 
 export { getTeams } from './teams.service'
-
-export { getLeagues } from './leagues.service'

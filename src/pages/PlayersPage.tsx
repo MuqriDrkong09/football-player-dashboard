@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import {
@@ -10,6 +10,7 @@ import {
 import {
   DEFAULT_LEAGUE_ID,
   DEFAULT_SEASON,
+  formatSeasonLabel,
   LEAGUE_LABEL,
 } from '@/config/football'
 import type { PlayerPosition } from '@/config/players'
@@ -87,9 +88,10 @@ export function PlayersPage() {
   const hasClientFilters =
     filters.position !== 'all' || filters.nationality !== 'all'
 
-  useEffect(() => {
+  const handleSearchChange = (search: string) => {
+    setFilters((current) => ({ ...current, search }))
     setPage(1)
-  }, [searchQuery, filters.teamId])
+  }
 
   const handlePositionChange = (position: PlayerPosition | 'all') => {
     setFilters((current) => ({ ...current, position }))
@@ -122,9 +124,7 @@ export function PlayersPage() {
         nationalities={nationalities}
         teams={teams}
         isTeamsLoading={isTeamsLoading}
-        onSearchChange={(search) =>
-          setFilters((current) => ({ ...current, search }))
-        }
+        onSearchChange={handleSearchChange}
         onPlayerSelect={handlePlayerSelect}
         onPositionChange={handlePositionChange}
         onNationalityChange={handleNationalityChange}
@@ -140,7 +140,7 @@ export function PlayersPage() {
           {hasClientFilters && ' (filtered)'}
         </p>
         <p className="text-sm text-muted-foreground">
-          {LEAGUE_LABEL} · 2024/25
+          {LEAGUE_LABEL} · {formatSeasonLabel(DEFAULT_SEASON)}
         </p>
       </div>
 

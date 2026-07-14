@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { LoadingSkeleton, QueryError } from '@/components/feedback'
 import { LazyImage } from '@/components/ui/lazy-image'
@@ -94,11 +94,13 @@ export function LeaderboardTable({
 }: LeaderboardTableProps) {
   const [sortKey, setSortKey] = useState<LeaderboardSortKey>(primaryStat)
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [trackedPrimaryStat, setTrackedPrimaryStat] = useState(primaryStat)
 
-  useEffect(() => {
+  if (trackedPrimaryStat !== primaryStat) {
+    setTrackedPrimaryStat(primaryStat)
     setSortKey(primaryStat)
     setSortDirection('desc')
-  }, [primaryStat])
+  }
 
   const sortedRows = useMemo(
     () => sortLeaderboardRows(rows, sortKey, sortDirection),
@@ -155,6 +157,13 @@ export function LeaderboardTable({
                     column.className,
                     column.align === 'right' && 'text-right',
                   )}
+                  aria-sort={
+                    sortKey === column.key
+                      ? sortDirection === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
                 >
                   <button
                     type="button"
@@ -180,67 +189,67 @@ export function LeaderboardTable({
 
           <TableBody>
             {sortedRows.map((row) => (
-                <TableRow key={row.playerId}>
-                  <TableCell className="text-right font-medium text-muted-foreground">
-                    {row.rank}
-                  </TableCell>
+              <TableRow key={row.playerId}>
+                <TableCell className="text-right font-medium text-muted-foreground">
+                  {row.rank}
+                </TableCell>
 
-                  <TableCell>
-                    <Link
-                      to={`/players/${row.playerId}`}
-                      className="group flex items-center gap-3"
+                <TableCell>
+                  <Link
+                    to={`/players/${row.playerId}`}
+                    className="group flex items-center gap-3"
+                  >
+                    <LazyImage
+                      src={row.photo}
+                      alt=""
+                      width={36}
+                      height={36}
+                      className="size-9 shrink-0 rounded-full border border-border bg-muted object-cover"
+                    />
+                    <span className="truncate font-medium group-hover:text-primary">
+                      {row.name}
+                    </span>
+                  </Link>
+                </TableCell>
+
+                {visibleColumns.slice(1).map((column) => {
+                  const isPrimary = column.key === primaryStat
+                  const value = getCellValue(row, column.key)
+
+                  return (
+                    <TableCell
+                      key={column.key}
+                      className={cn(
+                        column.className,
+                        column.align === 'right' && 'text-right',
+                        isPrimary && 'font-semibold text-primary',
+                      )}
                     >
-                      <LazyImage
-                        src={row.photo}
-                        alt=""
-                        width={36}
-                        height={36}
-                        className="size-9 shrink-0 rounded-full border border-border bg-muted object-cover"
-                      />
-                      <span className="truncate font-medium group-hover:text-primary">
-                        {row.name}
-                      </span>
-                    </Link>
-                  </TableCell>
-
-                  {visibleColumns.slice(1).map((column) => {
-                    const isPrimary = column.key === primaryStat
-                    const value = getCellValue(row, column.key)
-
-                    return (
-                      <TableCell
-                        key={column.key}
-                        className={cn(
-                          column.className,
-                          column.align === 'right' && 'text-right',
-                          isPrimary && 'font-semibold text-primary',
-                        )}
-                      >
-                        {column.key === 'team' ? (
-                          <div className="flex items-center gap-2">
-                            {row.teamLogo && (
-                              <LazyImage
-                                src={row.teamLogo}
-                                alt=""
-                                width={20}
-                                height={20}
-                                className="size-5 object-contain"
-                              />
-                            )}
-                            <span className="truncate">{value}</span>
-                          </div>
-                        ) : isPrimary ? (
-                          <Badge variant="pitch" className="tabular-nums">
-                            {getNumericValue(row, primaryStat)}
-                          </Badge>
-                        ) : (
-                          <span className="tabular-nums">{value}</span>
-                        )}
-                      </TableCell>
-                    )
-                  })}
-                </TableRow>
-              ))}
+                      {column.key === 'team' ? (
+                        <div className="flex items-center gap-2">
+                          {row.teamLogo && (
+                            <LazyImage
+                              src={row.teamLogo}
+                              alt=""
+                              width={20}
+                              height={20}
+                              className="size-5 object-contain"
+                            />
+                          )}
+                          <span className="truncate">{value}</span>
+                        </div>
+                      ) : isPrimary ? (
+                        <Badge variant="pitch" className="tabular-nums">
+                          {getNumericValue(row, primaryStat)}
+                        </Badge>
+                      ) : (
+                        <span className="tabular-nums">{value}</span>
+                      )}
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            ))}
 
             {sortedRows.length === 0 && (
               <TableRow>

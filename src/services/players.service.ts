@@ -3,15 +3,19 @@ import type {
   GetPlayerParams,
   GetPlayersParams,
   GetPlayerSeasonsParams,
-  GetPlayerStatisticsParams,
-  GetTopAssistsParams,
-  GetTopRedCardsParams,
-  GetTopScorersParams,
-  GetTopYellowCardsParams,
+  LeagueSeasonParams,
   PaginatedResult,
   PlayerProfile,
   SearchPlayersParams,
+  TopPlayersKind,
 } from '@/types/api-football'
+
+const TOP_PLAYERS_ENDPOINTS: Record<TopPlayersKind, string> = {
+  scorers: '/players/topscorers',
+  assists: '/players/topassists',
+  'yellow-cards': '/players/topyellowcards',
+  'red-cards': '/players/topredcards',
+}
 
 export async function getPlayers(
   params: GetPlayersParams,
@@ -23,17 +27,6 @@ export async function getPlayer(
   params: GetPlayerParams,
 ): Promise<PlayerProfile | null> {
   const { data } = await apiGet<PlayerProfile[]>('/players', params)
-  return data[0] ?? null
-}
-
-export async function getPlayerStatistics(
-  params: GetPlayerStatisticsParams,
-): Promise<PlayerProfile | null> {
-  const { data } = await apiGet<PlayerProfile[]>('/players', {
-    id: params.id,
-    season: params.season,
-  })
-
   return data[0] ?? null
 }
 
@@ -56,26 +49,9 @@ export async function searchPlayers(
   })
 }
 
-export async function getTopScorers(
-  params: GetTopScorersParams,
+export async function getTopPlayers(
+  kind: TopPlayersKind,
+  params: LeagueSeasonParams,
 ): Promise<PaginatedResult<PlayerProfile[]>> {
-  return apiGet<PlayerProfile[]>('/players/topscorers', params)
-}
-
-export async function getTopAssists(
-  params: GetTopAssistsParams,
-): Promise<PaginatedResult<PlayerProfile[]>> {
-  return apiGet<PlayerProfile[]>('/players/topassists', params)
-}
-
-export async function getTopYellowCards(
-  params: GetTopYellowCardsParams,
-): Promise<PaginatedResult<PlayerProfile[]>> {
-  return apiGet<PlayerProfile[]>('/players/topyellowcards', params)
-}
-
-export async function getTopRedCards(
-  params: GetTopRedCardsParams,
-): Promise<PaginatedResult<PlayerProfile[]>> {
-  return apiGet<PlayerProfile[]>('/players/topredcards', params)
+  return apiGet<PlayerProfile[]>(TOP_PLAYERS_ENDPOINTS[kind], params)
 }

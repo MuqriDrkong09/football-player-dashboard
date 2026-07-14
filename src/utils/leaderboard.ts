@@ -1,8 +1,5 @@
 import type { PlayerProfile } from '@/types/api-football'
-import {
-  aggregatePlayerStatistics,
-  getPrimaryStatistics,
-} from '@/utils/player'
+import { aggregatePlayerStatistics, getPrimaryStatistics } from '@/utils/player'
 
 export type LeaderboardSortKey =
   | 'name'
@@ -109,7 +106,11 @@ export const LEADERBOARD_COLUMNS: {
   align?: 'left' | 'right'
 }[] = [
   { key: 'name', label: 'Player', className: 'min-w-[12rem]' },
-  { key: 'team', label: 'Team', className: 'hidden sm:table-cell min-w-[9rem]' },
+  {
+    key: 'team',
+    label: 'Team',
+    className: 'hidden sm:table-cell min-w-[9rem]',
+  },
   {
     key: 'position',
     label: 'Pos',
@@ -134,7 +135,12 @@ export const LEADERBOARD_COLUMNS: {
     align: 'right',
   },
   { key: 'goals', label: 'Goals', align: 'right' },
-  { key: 'assists', label: 'Assists', className: 'hidden sm:table-cell', align: 'right' },
+  {
+    key: 'assists',
+    label: 'Assists',
+    className: 'hidden sm:table-cell',
+    align: 'right',
+  },
   {
     key: 'yellowCards',
     label: 'YC',

@@ -31,7 +31,8 @@ export class ErrorBoundary extends Component<
     console.error('ErrorBoundary caught an error:', error, info.componentStack)
     notify.error(
       'Unexpected error',
-      error.message || 'An unexpected error occurred while rendering this page.',
+      error.message ||
+        'An unexpected error occurred while rendering this page.',
     )
   }
 

@@ -6,7 +6,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react'
-import { toast } from '@/components/ui/toast'
+import { notify } from '@/lib/notify'
 import type { PlayerProfile } from '@/types/api-football'
 import {
   addFavoritePlayer,
@@ -79,7 +79,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     if (next === cachedSnapshot) return
 
     setFavoritesSnapshot(next)
-    toast.success(`${player.name} added to favorites`)
+    notify.success(`${player.name} added to favorites`)
   }, [])
 
   const removeFavorite = useCallback((playerId: number) => {
@@ -91,7 +91,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     setFavoritesSnapshot(next)
 
     if (removed) {
-      toast.success(`${removed.name} removed from favorites`)
+      notify.success(`${removed.name} removed from favorites`)
     }
   }, [])
 

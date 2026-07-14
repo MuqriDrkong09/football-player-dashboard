@@ -41,25 +41,17 @@ export function HomePage() {
       <RouteSuspense
         fallback={<LoadingSkeleton variant="card-grid" count={6} />}
       >
-        <FadeIn delayMs={60}>
-          <FeaturedPlayersSection />
-        </FadeIn>
-      </RouteSuspense>
-
-      <RouteSuspense
-        fallback={<LoadingSkeleton variant="card-grid" count={6} />}
-      >
-        <FadeIn delayMs={100}>
-          <TopScorersSection />
-        </FadeIn>
-      </RouteSuspense>
-
-      <RouteSuspense
-        fallback={<LoadingSkeleton variant="card-grid" count={6} />}
-      >
-        <FadeIn delayMs={140}>
-          <TopAssistsSection />
-        </FadeIn>
+        <div className="space-y-12 sm:space-y-16">
+          <FadeIn delayMs={60}>
+            <FeaturedPlayersSection />
+          </FadeIn>
+          <FadeIn delayMs={100}>
+            <TopScorersSection />
+          </FadeIn>
+          <FadeIn delayMs={140}>
+            <TopAssistsSection />
+          </FadeIn>
+        </div>
       </RouteSuspense>
 
       <RouteSuspense

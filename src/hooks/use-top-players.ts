@@ -2,27 +2,29 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { getErrorMessage } from '@/api'
 import { LEADERBOARD_STALE_TIME } from '@/lib/query-client'
 import { queryKeys } from '@/lib/query-keys'
-import { getTopScorers } from '@/services/players.service'
+import { getTopPlayers } from '@/services/players.service'
 import type {
-  GetTopScorersParams,
+  LeagueSeasonParams,
   PaginatedResult,
   PlayerProfile,
+  TopPlayersKind,
 } from '@/types/api-football'
 
-type TopScorersData = PaginatedResult<PlayerProfile[]>
+type TopPlayersData = PaginatedResult<PlayerProfile[]>
 
-type UseTopScorersOptions = Omit<
-  UseQueryOptions<TopScorersData, Error, TopScorersData>,
+type UseTopPlayersOptions = Omit<
+  UseQueryOptions<TopPlayersData, Error, TopPlayersData>,
   'queryKey' | 'queryFn'
 >
 
-export function useTopScorers(
-  params: GetTopScorersParams,
-  options?: UseTopScorersOptions,
+export function useTopPlayers(
+  kind: TopPlayersKind,
+  params: LeagueSeasonParams,
+  options?: UseTopPlayersOptions,
 ) {
   const query = useQuery({
-    queryKey: queryKeys.players.topScorers(params),
-    queryFn: () => getTopScorers(params),
+    queryKey: queryKeys.players.topPlayers(kind, params),
+    queryFn: () => getTopPlayers(kind, params),
     enabled: !!params.league && !!params.season,
     staleTime: LEADERBOARD_STALE_TIME,
     ...options,
@@ -30,12 +32,9 @@ export function useTopScorers(
 
   return {
     ...query,
-    scorers: query.data?.data ?? [],
+    players: query.data?.data ?? [],
     paging: query.data?.paging,
     results: query.data?.results ?? 0,
-    isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error,
     errorMessage: query.error ? getErrorMessage(query.error) : null,
   }
 }

@@ -1,3 +1,4 @@
+import { formatSeasonLabel } from '@/config/football'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -48,7 +49,7 @@ export function SeasonSelector({
             .sort((a, b) => b - a)
             .map((season) => (
               <SelectItem key={season} value={String(season)}>
-                {season}/{String(season + 1).slice(-2)}
+                {formatSeasonLabel(season)}
               </SelectItem>
             ))}
         </SelectContent>

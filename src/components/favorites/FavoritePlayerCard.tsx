@@ -1,4 +1,4 @@
-import { Heart, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
@@ -40,7 +40,7 @@ export const FavoritePlayerCard = memo(function FavoritePlayerCard({
         onClick={() => onRemove(player.id)}
         aria-label={`Remove ${player.name} from favorites`}
       >
-        <Trash2 className="size-4" />
+        <Trash2 className="size-4" aria-hidden="true" />
       </Button>
 
       <Link to={`/players/${player.id}`} className="group block h-full">
@@ -88,41 +88,5 @@ export const FavoritePlayerCard = memo(function FavoritePlayerCard({
         </CardContent>
       </Link>
     </Card>
-  )
-})
-
-type FavoriteButtonProps = {
-  isFavorite: boolean
-  onClick: () => void
-  className?: string
-  size?: 'default' | 'sm' | 'icon'
-}
-
-export const FavoriteButton = memo(function FavoriteButton({
-  isFavorite,
-  onClick,
-  className,
-  size = 'icon',
-}: FavoriteButtonProps) {
-  return (
-    <Button
-      type="button"
-      variant={isFavorite ? 'default' : 'outline'}
-      size={size}
-      onClick={(event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        onClick()
-      }}
-      className={cn(
-        isFavorite && 'bg-primary text-primary-foreground',
-        className,
-      )}
-      aria-label={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
-      aria-pressed={isFavorite}
-    >
-      <Heart className={cn('size-4', isFavorite && 'fill-current')} />
-      {size !== 'icon' && <span>{isFavorite ? 'Saved' : 'Save player'}</span>}
-    </Button>
   )
 })

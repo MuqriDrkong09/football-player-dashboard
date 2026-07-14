@@ -1,8 +1,0 @@
-export { AboutPage } from './AboutPage'
-export { ComparePage } from './ComparePage'
-export { FavoritesPage } from './FavoritesPage'
-export { HomePage } from './HomePage'
-export { LeaderboardsPage } from './LeaderboardsPage'
-export { NotFoundPage } from './NotFoundPage'
-export { PlayerDetailPage } from './PlayerDetailPage'
-export { PlayersPage } from './PlayersPage'

@@ -11,7 +11,7 @@ import { PageShell } from '@/components/layout'
 import { SeasonSelector } from '@/components/player-detail/SeasonSelector'
 import { DEFAULT_SEASON, LEAGUE_LABEL } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
-import { usePlayer, usePlayers } from '@/hooks'
+import { usePlayer } from '@/hooks'
 import { aggregatePlayerStatistics } from '@/utils/player'
 import { buildComparisonChartData } from '@/utils/compare'
 
@@ -49,21 +49,6 @@ export function ComparePage() {
     isFetching: isPlayer2Fetching,
   } = usePlayer({ id: player2Id ?? 0, season }, { enabled: player2Id !== null })
 
-  const { players: player1Options } = usePlayers(
-    { id: player1Id ?? undefined, season },
-    { enabled: player1Id !== null },
-  )
-
-  const { players: player2Options } = usePlayers(
-    { id: player2Id ?? undefined, season },
-    { enabled: player2Id !== null },
-  )
-
-  const selectedPlayer1 =
-    player1 ?? (player1Id ? (player1Options[0] ?? null) : null)
-  const selectedPlayer2 =
-    player2 ?? (player2Id ? (player2Options[0] ?? null) : null)
-
   const bothSelected = player1Id !== null && player2Id !== null
   const isLoading = bothSelected && (isPlayer1Loading || isPlayer2Loading)
   const isError = isPlayer1Error || isPlayer2Error
@@ -94,7 +79,7 @@ export function ComparePage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <PlayerCompareSelector
           label="Player 1"
-          selectedPlayer={selectedPlayer1}
+          selectedPlayer={player1}
           selectedId={player1Id}
           onSelect={setPlayer1Id}
           onClear={() => setPlayer1Id(null)}
@@ -103,7 +88,7 @@ export function ComparePage() {
         />
         <PlayerCompareSelector
           label="Player 2"
-          selectedPlayer={selectedPlayer2}
+          selectedPlayer={player2}
           selectedId={player2Id}
           onSelect={setPlayer2Id}
           onClear={() => setPlayer2Id(null)}

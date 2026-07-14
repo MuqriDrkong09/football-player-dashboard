@@ -2,12 +2,17 @@ import type {
   GetPlayerParams,
   GetPlayersParams,
   GetTeamsParams,
-  GetTopAssistsParams,
-  GetTopRedCardsParams,
-  GetTopScorersParams,
-  GetTopYellowCardsParams,
+  LeagueSeasonParams,
   SearchPlayersParams,
+  TopPlayersKind,
 } from '@/types/api-football'
+
+const TOP_PLAYERS_KEY: Record<TopPlayersKind, string> = {
+  scorers: 'top-scorers',
+  assists: 'top-assists',
+  'yellow-cards': 'top-yellow-cards',
+  'red-cards': 'top-red-cards',
+}
 
 export const queryKeys = {
   all: ['football'] as const,
@@ -24,14 +29,8 @@ export const queryKeys = {
       [...queryKeys.players.details(), params] as const,
     seasons: (playerId: number) =>
       [...queryKeys.players.all(), 'seasons', playerId] as const,
-    topScorers: (params: GetTopScorersParams) =>
-      [...queryKeys.players.all(), 'top-scorers', params] as const,
-    topAssists: (params: GetTopAssistsParams) =>
-      [...queryKeys.players.all(), 'top-assists', params] as const,
-    topYellowCards: (params: GetTopYellowCardsParams) =>
-      [...queryKeys.players.all(), 'top-yellow-cards', params] as const,
-    topRedCards: (params: GetTopRedCardsParams) =>
-      [...queryKeys.players.all(), 'top-red-cards', params] as const,
+    topPlayers: (kind: TopPlayersKind, params: LeagueSeasonParams) =>
+      [...queryKeys.players.all(), TOP_PLAYERS_KEY[kind], params] as const,
   },
 
   teams: {

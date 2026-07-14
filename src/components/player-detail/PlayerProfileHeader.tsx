@@ -89,6 +89,7 @@ export function PlayerProfileHeader({
           <FavoriteButton
             isFavorite={isFavorite(player.id)}
             onClick={() => toggleFavorite(profile)}
+            playerName={player.name}
             size="sm"
           />
         </div>

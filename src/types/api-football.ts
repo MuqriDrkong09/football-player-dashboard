@@ -55,46 +55,6 @@ export interface LeagueInfo {
   season: number
 }
 
-export interface LeagueSeason {
-  year: number
-  start: string
-  end: string
-  current: boolean
-  coverage: {
-    fixtures: {
-      events: boolean
-      lineups: boolean
-      statistics_fixtures: boolean
-      statistics_players: boolean
-    }
-    standings: boolean
-    players: boolean
-    top_scorers: boolean
-    top_assists: boolean
-    top_cards: boolean
-    injuries: boolean
-    predictions: boolean
-    odds: boolean
-  }
-}
-
-export interface LeagueCountry {
-  name: string
-  code: string | null
-  flag: string | null
-}
-
-export interface League {
-  league: {
-    id: number
-    name: string
-    type: string
-    logo: string
-  }
-  country: LeagueCountry
-  seasons: LeagueSeason[]
-}
-
 export interface TeamVenue {
   id: number | null
   name: string | null
@@ -209,11 +169,6 @@ export interface GetPlayerParams {
   season?: number
 }
 
-export interface GetPlayerStatisticsParams {
-  id: number
-  season: number
-}
-
 export interface GetPlayerSeasonsParams {
   player: number
 }
@@ -226,25 +181,14 @@ export interface SearchPlayersParams {
   page?: number
 }
 
-export interface GetTopScorersParams {
+/** Shared params for league-season leaderboard endpoints. */
+export interface LeagueSeasonParams {
   league: number
   season: number
 }
 
-export interface GetTopAssistsParams {
-  league: number
-  season: number
-}
-
-export interface GetTopYellowCardsParams {
-  league: number
-  season: number
-}
-
-export interface GetTopRedCardsParams {
-  league: number
-  season: number
-}
+export type TopPlayersKind =
+  'scorers' | 'assists' | 'yellow-cards' | 'red-cards'
 
 export interface GetTeamsParams {
   id?: number
@@ -252,19 +196,6 @@ export interface GetTeamsParams {
   league?: number
   season?: number
   country?: string
-  search?: string
-  page?: number
-}
-
-export interface GetLeaguesParams {
-  id?: number
-  name?: string
-  country?: string
-  code?: string
-  season?: number
-  team?: number
-  type?: string
-  current?: boolean
   search?: string
   page?: number
 }

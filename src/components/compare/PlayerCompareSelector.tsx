@@ -146,15 +146,7 @@ export function PlayerCompareSelector({
               <p className="truncate font-semibold">
                 {selectedPlayer.player.name}
               </p>
-              <p className="truncate text-sm text-muted-foreground">
-                {getPrimaryStatistics(selectedPlayer)?.team?.name ??
-                  'Unknown team'}
-              </p>
-              {getPrimaryStatistics(selectedPlayer)?.games?.position && (
-                <Badge variant="secondary" className="mt-1">
-                  {getPrimaryStatistics(selectedPlayer)?.games?.position}
-                </Badge>
-              )}
+              <SelectedPlayerMeta profile={selectedPlayer} />
             </div>
             <Button
               type="button"
@@ -163,11 +155,28 @@ export function PlayerCompareSelector({
               onClick={onClear}
               aria-label={`Clear ${label}`}
             >
-              <X className="size-4" />
+              <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
         )}
       </CardContent>
     </Card>
+  )
+}
+
+function SelectedPlayerMeta({ profile }: { profile: PlayerProfile }) {
+  const stats = getPrimaryStatistics(profile)
+
+  return (
+    <>
+      <p className="truncate text-sm text-muted-foreground">
+        {stats?.team?.name ?? 'Unknown team'}
+      </p>
+      {stats?.games?.position && (
+        <Badge variant="secondary" className="mt-1">
+          {stats.games.position}
+        </Badge>
+      )}
+    </>
   )
 }

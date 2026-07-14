@@ -9,3 +9,9 @@ export const HOME_LIMITS = {
 } as const
 
 export const LEAGUE_LABEL = 'Premier League'
+
+/** Formats a season start year as `YYYY/YY` (e.g. 2024 → 2024/25). */
+export function formatSeasonLabel(season: number): string {
+  const next = String(season + 1).slice(-2)
+  return `${season}/${next}`
+}

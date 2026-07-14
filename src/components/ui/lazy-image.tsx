@@ -1,9 +1,5 @@
 import { cn } from '@/lib/utils'
-import {
-  useState,
-  type ImgHTMLAttributes,
-  type SyntheticEvent,
-} from 'react'
+import { useState, type ImgHTMLAttributes, type SyntheticEvent } from 'react'
 
 type LazyImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, 'loading'> & {
   /** Use eager loading for above-the-fold LCP images. */

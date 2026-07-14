@@ -68,20 +68,6 @@ export function pickDefaultSeason(seasons: number[]): number | null {
   return Math.max(...seasons)
 }
 
-export function getPlayerGoals(profile: PlayerProfile): number {
-  return profile.statistics.reduce(
-    (total, stat) => total + (stat.goals?.total ?? 0),
-    0,
-  )
-}
-
-export function getPlayerAssists(profile: PlayerProfile): number {
-  return profile.statistics.reduce(
-    (total, stat) => total + (stat.goals?.assists ?? 0),
-    0,
-  )
-}
-
 export function filterPlayersByPosition(
   players: PlayerProfile[],
   position: PlayerPosition | 'all',
