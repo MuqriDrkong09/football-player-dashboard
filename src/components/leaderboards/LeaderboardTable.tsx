@@ -51,7 +51,10 @@ function SortIcon({
   )
 }
 
-function getCellValue(row: LeaderboardRow, key: LeaderboardSortKey): string {
+export function getCellValue(
+  row: LeaderboardRow,
+  key: LeaderboardSortKey,
+): string {
   switch (key) {
     case 'name':
       return row.name
@@ -78,7 +81,10 @@ function getCellValue(row: LeaderboardRow, key: LeaderboardSortKey): string {
   }
 }
 
-function getNumericValue(row: LeaderboardRow, key: LeaderboardStatKey): number {
+export function getNumericValue(
+  row: LeaderboardRow,
+  key: LeaderboardStatKey,
+): number {
   return row[key]
 }
 

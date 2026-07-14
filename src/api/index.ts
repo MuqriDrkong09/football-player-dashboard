@@ -1,4 +1,4 @@
-export { apiConfig, assertApiKey } from './config'
+export { apiConfig, assertApiKey, createApiConfig } from './config'
 export { apiClient, apiGet, apiRequest } from './client'
 export {
   ApiError,
