@@ -44,6 +44,9 @@ export interface TeamInfo {
   id: number
   name: string
   logo: string
+  country?: string | null
+  founded?: number | null
+  national?: boolean
 }
 
 export interface LeagueInfo {
@@ -198,4 +201,123 @@ export interface GetTeamsParams {
   country?: string
   search?: string
   page?: number
+}
+
+export interface GetTeamParams {
+  id: number
+}
+
+export interface GetTeamStatisticsParams {
+  team: number
+  league: number
+  season: number
+}
+
+export interface GetTeamCoachParams {
+  team: number
+}
+
+export interface GetStandingsParams {
+  league: number
+  season: number
+  team?: number
+}
+
+export interface TeamStatSplit {
+  home: number | null
+  away: number | null
+  total: number | null
+}
+
+export interface TeamStatisticsFixtures {
+  played: TeamStatSplit
+  wins: TeamStatSplit
+  draws: TeamStatSplit
+  loses: TeamStatSplit
+}
+
+export interface TeamGoalsMinuteBucket {
+  total: number | null
+  percentage: string | null
+}
+
+export interface TeamStatisticsGoals {
+  for: {
+    total: TeamStatSplit
+    average: { home: string | null; away: string | null; total: string | null }
+    minute?: Record<string, TeamGoalsMinuteBucket>
+  }
+  against: {
+    total: TeamStatSplit
+    average: { home: string | null; away: string | null; total: string | null }
+    minute?: Record<string, TeamGoalsMinuteBucket>
+  }
+}
+
+export interface TeamStatistics {
+  league: LeagueInfo
+  team: TeamInfo
+  form: string | null
+  fixtures: TeamStatisticsFixtures
+  goals: TeamStatisticsGoals
+}
+
+export interface CoachCareerItem {
+  team: TeamInfo
+  start: string | null
+  end: string | null
+}
+
+export interface Coach {
+  id: number
+  name: string | null
+  firstname: string | null
+  lastname: string | null
+  age: number | null
+  nationality: string | null
+  photo: string | null
+  team: TeamInfo | null
+  career: CoachCareerItem[]
+}
+
+export interface StandingTeamGoals {
+  for: number
+  against: number
+}
+
+export interface StandingTeamRecord {
+  played: number
+  win: number
+  draw: number
+  lose: number
+  goals: StandingTeamGoals
+}
+
+export interface StandingRow {
+  rank: number
+  team: TeamInfo
+  points: number
+  goalsDiff: number
+  group: string
+  form: string | null
+  status: string | null
+  description: string | null
+  all: StandingTeamRecord
+  home: StandingTeamRecord
+  away: StandingTeamRecord
+  update: string
+}
+
+export interface StandingLeague {
+  id: number
+  name: string
+  country: string
+  logo: string
+  flag: string | null
+  season: number
+  standings: StandingRow[][]
+}
+
+export interface StandingResponseItem {
+  league: StandingLeague
 }

@@ -1,4 +1,10 @@
-import { Database, GitCompareArrows, Trophy, Users } from 'lucide-react'
+import {
+  Database,
+  GitCompareArrows,
+  Shield,
+  Trophy,
+  Users,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { PageShell } from '@/components/layout'
 import { Button } from '@/components/ui/button'
@@ -21,6 +27,12 @@ const FEATURES = [
     href: '/players',
   },
   {
+    title: 'Teams',
+    description: 'Browse every club and open team profiles with season stats.',
+    icon: Shield,
+    href: '/teams',
+  },
+  {
     title: 'Leaderboards',
     description: 'Track top scorers, assists, and discipline leaders.',
     icon: Trophy,
@@ -38,6 +50,7 @@ const FEATURES = [
     icon: Database,
     href: '/players',
   },
+
 ] as const
 
 export function AboutPage() {

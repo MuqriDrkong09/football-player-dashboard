@@ -1,7 +1,11 @@
 import type {
   GetPlayerParams,
   GetPlayersParams,
+  GetStandingsParams,
+  GetTeamCoachParams,
+  GetTeamParams,
   GetTeamsParams,
+  GetTeamStatisticsParams,
   LeagueSeasonParams,
   SearchPlayersParams,
   TopPlayersKind,
@@ -38,5 +42,14 @@ export const queryKeys = {
     lists: () => [...queryKeys.teams.all(), 'list'] as const,
     list: (params?: GetTeamsParams) =>
       [...queryKeys.teams.lists(), params ?? {}] as const,
+    details: () => [...queryKeys.teams.all(), 'detail'] as const,
+    detail: (params: GetTeamParams) =>
+      [...queryKeys.teams.details(), params] as const,
+    statistics: (params: GetTeamStatisticsParams) =>
+      [...queryKeys.teams.all(), 'statistics', params] as const,
+    coach: (params: GetTeamCoachParams) =>
+      [...queryKeys.teams.all(), 'coach', params] as const,
+    standing: (params: GetStandingsParams & { team: number }) =>
+      [...queryKeys.teams.all(), 'standing', params] as const,
   },
 } as const

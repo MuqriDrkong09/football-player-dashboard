@@ -16,6 +16,18 @@ export const PlayerDetailPage = lazy(() =>
   })),
 )
 
+export const TeamsPage = lazy(() =>
+  import('@/pages/TeamsPage').then((module) => ({
+    default: module.TeamsPage,
+  })),
+)
+
+export const TeamDetailPage = lazy(() =>
+  import('@/pages/TeamDetailPage').then((module) => ({
+    default: module.TeamDetailPage,
+  })),
+)
+
 export const LeaderboardsPage = lazy(() =>
   import('@/pages/LeaderboardsPage').then((module) => ({
     default: module.LeaderboardsPage,

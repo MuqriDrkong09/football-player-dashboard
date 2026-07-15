@@ -6,4 +6,12 @@ export {
   searchPlayers,
 } from './players.service'
 
-export { getTeams } from './teams.service'
+export {
+  getTeams,
+  getTeam,
+  getTeamStatistics,
+  getTeamCoach,
+  getTeamCoaches,
+  getStandings,
+  getTeamStanding,
+} from './teams.service'

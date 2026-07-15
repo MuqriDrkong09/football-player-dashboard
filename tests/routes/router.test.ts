@@ -12,7 +12,10 @@ describe('routes/router', () => {
         '/',
         '/players',
         '/players/:playerId',
+        '/teams',
+        '/teams/:teamId',
         '/leaderboards',
+
         '/compare',
         '/favorites',
         '/about',

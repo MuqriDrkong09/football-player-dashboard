@@ -12,11 +12,13 @@ describe('config/navigation', () => {
   it('lists main nav destinations', () => {
     expect(mainNavItems.map((item) => item.href)).toEqual([
       '/players',
+      '/teams',
       '/leaderboards',
       '/compare',
       '/favorites',
       '/about',
     ])
+
   })
 
   it('adds dashboard to the sidebar', () => {

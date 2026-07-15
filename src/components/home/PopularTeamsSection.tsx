@@ -26,7 +26,7 @@ export function PopularTeamsSection() {
       description={`Clubs competing in the ${LEAGUE_LABEL}`}
       action={
         <Button asChild variant="ghost" size="sm">
-          <Link to="/players">Browse squads</Link>
+          <Link to="/teams">View all teams</Link>
         </Button>
       }
       isLoading={isLoading}

@@ -10,6 +10,7 @@ describe('config/seo', () => {
 
   it('defines page metadata for each route surface', () => {
     expect(PAGE_META.home.title).toBe('Dashboard')
+    expect(PAGE_META.teams.title).toBe('Teams')
     expect(PAGE_META.notFound.noIndex).toBe(true)
     expect(PAGE_META.favorites.description).toContain('saved')
   })

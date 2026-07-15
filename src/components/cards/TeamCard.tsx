@@ -21,7 +21,7 @@ export const TeamCard = memo(function TeamCard({
   className,
 }: TeamCardProps) {
   return (
-    <Link to="/players" className="group block h-full">
+    <Link to={`/teams/${team.team.id}`} className="group block h-full">
       <Card
         className={cn(
           'h-full transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md',

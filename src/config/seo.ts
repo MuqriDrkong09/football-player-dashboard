@@ -35,6 +35,15 @@ export const PAGE_META = {
     title: 'Player Details',
     description: `View season statistics, charts, and profile details for ${LEAGUE_LABEL} players.`,
   },
+  teams: {
+    title: 'Teams',
+    description: `Browse all ${LEAGUE_LABEL} clubs and open a team for stadium, coach, and season stats.`,
+  },
+  teamDetail: {
+    title: 'Team Details',
+    description: `View club profile, stadium, coach, and season statistics for ${LEAGUE_LABEL} teams.`,
+  },
+
   leaderboards: {
     title: 'Leaderboards',
     description: `Top scorers, assists, and card leaders in the ${LEAGUE_LABEL}.`,

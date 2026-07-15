@@ -38,7 +38,7 @@ function createTeamWithVenue(
 }
 
 describe('components/cards/TeamCard', () => {
-  it('renders team identity, city, stadium, and players link', () => {
+  it('renders team identity, city, stadium, and team detail link', () => {
     const team = createTeam({ id: 40, name: 'Liverpool' })
 
     renderCard(<TeamCard team={team} />)
@@ -50,7 +50,7 @@ describe('components/cards/TeamCard', () => {
     expect(screen.getByText('Liverpool')).toBeInTheDocument()
     expect(screen.getByText('Manchester')).toBeInTheDocument()
     expect(screen.getByText('Old Trafford')).toBeInTheDocument()
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/players')
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/teams/40')
   })
 
   it('hides the city description when venue city is missing', () => {
