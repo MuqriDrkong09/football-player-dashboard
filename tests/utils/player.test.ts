@@ -70,6 +70,24 @@ describe('utils/player', () => {
     })
   })
 
+  it('treats missing nested aggregate fields as zero', () => {
+    const sparse = {
+      ...createStatistics(),
+      goals: undefined,
+      games: undefined,
+      cards: undefined,
+    } as ReturnType<typeof createStatistics>
+
+    expect(aggregatePlayerStatistics([sparse])).toEqual({
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      matches: 0,
+      yellowCards: 0,
+      redCards: 0,
+    })
+  })
+
   it('maps competition chart rows', () => {
     const rows = getCompetitionChartData([
       createStatistics({
@@ -89,6 +107,42 @@ describe('utils/player', () => {
       name: 'Premier League',
       goals: 8,
       assists: 2,
+    })
+  })
+
+  it('treats missing nested chart fields as zero', () => {
+    const sparse = {
+      ...createStatistics({
+        league: {
+          id: 2,
+          name: 'Cup',
+          country: 'England',
+          logo: '',
+          flag: null,
+          season: 2024,
+        },
+      }),
+      goals: { total: null, conceded: 0, assists: null, saves: null },
+      games: {
+        appearences: null,
+        lineups: 0,
+        minutes: null,
+        number: null,
+        position: 'Attacker',
+        rating: null,
+        captain: false,
+      },
+      cards: { yellow: null, yellowred: 0, red: null },
+    } as ReturnType<typeof createStatistics>
+
+    expect(getCompetitionChartData([sparse])[0]).toEqual({
+      name: 'Cup',
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      matches: 0,
+      yellowCards: 0,
+      redCards: 0,
     })
   })
 
@@ -131,6 +185,10 @@ describe('utils/player', () => {
         }),
       ],
     })
+    const noStats = createPlayerProfile({
+      player: { id: 3, name: 'C', nationality: 'Spain' },
+      statistics: [],
+    })
 
     expect(filterPlayersByPosition([attacker, midfielder], 'all')).toHaveLength(
       2,
@@ -138,6 +196,9 @@ describe('utils/player', () => {
     expect(filterPlayersByPosition([attacker, midfielder], 'Attacker')).toEqual(
       [attacker],
     )
+    expect(
+      filterPlayersByPosition([attacker, midfielder, noStats], 'Attacker'),
+    ).toEqual([attacker])
     expect(
       filterPlayersByNationality([attacker, midfielder], 'Brazil'),
     ).toEqual([midfielder])

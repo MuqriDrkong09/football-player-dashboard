@@ -84,15 +84,11 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const removeFavorite = useCallback((playerId: number) => {
     const removed = cachedSnapshot.find((favorite) => favorite.id === playerId)
-    const next = removeFavoritePlayer(cachedSnapshot, playerId)
 
-    if (next === cachedSnapshot) return
+    if (!removed) return
 
-    setFavoritesSnapshot(next)
-
-    if (removed) {
-      notify.success(`${removed.name} removed from favorites`)
-    }
+    setFavoritesSnapshot(removeFavoritePlayer(cachedSnapshot, playerId))
+    notify.success(`${removed.name} removed from favorites`)
   }, [])
 
   const toggleFavorite = useCallback(

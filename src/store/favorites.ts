@@ -33,11 +33,27 @@ export function createFavoriteFromProfile(
   }
 }
 
-export function readFavorites(): FavoritePlayer[] {
-  if (typeof window === 'undefined') return []
+/** Returns false in non-browser runtimes (e.g. SSR). */
+export function canUseFavoritesStorage(
+  scope: { window?: unknown } = globalThis,
+): boolean {
+  return typeof scope.window !== 'undefined'
+}
+
+export function getFavoritesStorage(
+  scope: { window?: unknown } = globalThis,
+): Pick<Storage, 'getItem'> | null {
+  if (!canUseFavoritesStorage(scope)) return null
+  return localStorage
+}
+
+export function readFavorites(
+  storage: Pick<Storage, 'getItem'> | null = getFavoritesStorage(),
+): FavoritePlayer[] {
+  if (!storage) return []
 
   try {
-    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY)
+    const raw = storage.getItem(FAVORITES_STORAGE_KEY)
     if (!raw) return []
 
     const parsed = JSON.parse(raw) as FavoritePlayer[]
@@ -66,6 +82,10 @@ export function removeFavoritePlayer(
   favorites: FavoritePlayer[],
   playerId: number,
 ): FavoritePlayer[] {
+  if (!favorites.some((favorite) => favorite.id === playerId)) {
+    return favorites
+  }
+
   return favorites.filter((favorite) => favorite.id !== playerId)
 }
 

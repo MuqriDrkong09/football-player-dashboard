@@ -172,7 +172,7 @@ describe('components/search/Search', () => {
     expect(screen.queryByText('·')).not.toBeInTheDocument()
   })
 
-  it('shows errors with retry and a default message fallback', async () => {
+  it('shows errors and retries via Try again', async () => {
     const user = userEvent.setup()
     const refetch = jest.fn()
     mockSearch({
@@ -181,23 +181,30 @@ describe('components/search/Search', () => {
       refetch,
     })
 
-    const { rerender } = render(<Search minChars={1} />)
+    render(<Search minChars={1} />)
     await user.type(screen.getByRole('combobox'), 'x')
     expect(await screen.findByText('Network down')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Try again' }))
     expect(refetch).toHaveBeenCalled()
+  })
 
+  it('falls back to a default error message when none is provided', async () => {
+    jest.useFakeTimers()
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
     mockSearch({
       isError: true,
       errorMessage: null,
-      refetch,
     })
-    rerender(<Search minChars={1} defaultValue="x" />)
+
+    render(<Search minChars={1} defaultValue="x" />)
     await user.click(screen.getByRole('combobox'))
+
     expect(
       await screen.findByText('Failed to load suggestions'),
     ).toBeInTheDocument()
+
+    jest.useRealTimers()
   })
 
   it('clears the query and refocuses the input', async () => {

@@ -1,7 +1,9 @@
 import {
+  COMPARISON_STATS,
   buildComparisonChartData,
   countComparisonWins,
   getBetterPlayer,
+  type ComparisonStatKey,
 } from '@/utils/compare'
 import type { AggregatedPlayerStats } from '@/utils/player'
 
@@ -24,6 +26,15 @@ const player2: AggregatedPlayerStats = {
 }
 
 describe('utils/compare', () => {
+  it('exposes the expected comparison stat metadata', () => {
+    expect(COMPARISON_STATS).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: 'goals', higherIsBetter: true }),
+        expect.objectContaining({ key: 'yellowCards', higherIsBetter: false }),
+      ]),
+    )
+  })
+
   it('picks the better player for higher-is-better stats', () => {
     expect(getBetterPlayer('goals', 10, 8)).toBe('player1')
     expect(getBetterPlayer('assists', 3, 7)).toBe('player2')
@@ -35,19 +46,35 @@ describe('utils/compare', () => {
     expect(getBetterPlayer('redCards', 2, 0)).toBe('player2')
   })
 
+  it('defaults unknown keys to higher-is-better', () => {
+    const unknownKey = 'unknownStat' as ComparisonStatKey
+
+    expect(getBetterPlayer(unknownKey, 9, 4)).toBe('player1')
+    expect(getBetterPlayer(unknownKey, 2, 8)).toBe('player2')
+  })
+
   it('builds comparison chart rows for all stats', () => {
     const rows = buildComparisonChartData(player1, player2)
 
     expect(rows).toHaveLength(6)
     expect(rows.find((row) => row.stat === 'goals')).toMatchObject({
+      label: 'Goals',
+      player1: 20,
+      player2: 15,
       player1Better: true,
       player2Better: false,
       isTie: false,
     })
     expect(rows.find((row) => row.stat === 'minutes')).toMatchObject({
       isTie: true,
+      player1Better: false,
+      player2Better: false,
     })
     expect(rows.find((row) => row.stat === 'yellowCards')).toMatchObject({
+      player1Better: false,
+      player2Better: true,
+    })
+    expect(rows.find((row) => row.stat === 'assists')).toMatchObject({
       player1Better: false,
       player2Better: true,
     })
@@ -58,7 +85,10 @@ describe('utils/compare', () => {
       buildComparisonChartData(player1, player2),
     )
 
-    expect(totals.player1 + totals.player2 + totals.ties).toBe(6)
-    expect(totals.ties).toBeGreaterThanOrEqual(1)
+    expect(totals).toEqual({
+      player1: 3,
+      player2: 2,
+      ties: 1,
+    })
   })
 })
