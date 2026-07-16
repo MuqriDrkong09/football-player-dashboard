@@ -26,11 +26,16 @@ jest.mock('@/hooks/use-team-coach', () => ({
   useTeamCoach: jest.fn(),
 }))
 
+jest.mock('@/hooks/use-players', () => ({
+  usePlayers: jest.fn(),
+}))
+
 import { usePageMeta } from '@/hooks/use-page-meta'
 import { useTeam } from '@/hooks/use-team'
 import { useTeamStatistics } from '@/hooks/use-team-statistics'
 import { useTeamStanding } from '@/hooks/use-team-standing'
 import { useTeamCoach } from '@/hooks/use-team-coach'
+import { usePlayers } from '@/hooks/use-players'
 
 const mockedUsePageMeta = usePageMeta as jest.MockedFunction<typeof usePageMeta>
 const mockedUseTeam = useTeam as jest.MockedFunction<typeof useTeam>
@@ -43,6 +48,7 @@ const mockedUseTeamStanding = useTeamStanding as jest.MockedFunction<
 const mockedUseTeamCoach = useTeamCoach as jest.MockedFunction<
   typeof useTeamCoach
 >
+const mockedUsePlayers = usePlayers as jest.MockedFunction<typeof usePlayers>
 
 function mockTeam(
   partial: Partial<ReturnType<typeof useTeam>> = {},
@@ -99,6 +105,21 @@ function mockCoach(
     isFetching: false,
     ...partial,
   } as ReturnType<typeof useTeamCoach>)
+}
+
+function mockSquad(partial: Partial<ReturnType<typeof usePlayers>> = {}) {
+  mockedUsePlayers.mockReturnValue({
+    players: [],
+    paging: { current: 1, total: 1 },
+    results: 0,
+    isLoading: false,
+    isError: false,
+    error: null,
+    errorMessage: null,
+    refetch: jest.fn(),
+    isFetching: false,
+    ...partial,
+  } as ReturnType<typeof usePlayers>)
 }
 
 function createStatistics(): TeamStatistics {
@@ -184,6 +205,7 @@ describe('pages/TeamDetailPage', () => {
     mockStatistics()
     mockStanding()
     mockCoach()
+    mockSquad()
   })
 
   it('shows an invalid-team empty state for bad ids', () => {
@@ -256,6 +278,8 @@ describe('pages/TeamDetailPage', () => {
 
     expect(screen.getByText('Team Information')).toBeInTheDocument()
     expect(screen.getByText('Liverpool')).toBeInTheDocument()
+    expect(screen.getByText('Team Squad')).toBeInTheDocument()
+    expect(screen.getByText('No squad players')).toBeInTheDocument()
     expect(screen.getByText('No season statistics')).toBeInTheDocument()
     expect(mockedUsePageMeta).toHaveBeenCalledWith(
       expect.objectContaining({

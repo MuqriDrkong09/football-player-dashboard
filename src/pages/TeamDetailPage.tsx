@@ -3,7 +3,11 @@ import { ShieldX } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { isApiError } from '@/api'
 import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
-import { TeamInfoSection, TeamStatsSection } from '@/components/team-detail'
+import {
+  TeamInfoSection,
+  TeamSquadSection,
+  TeamStatsSection,
+} from '@/components/team-detail'
 import { Button } from '@/components/ui/button'
 import { DEFAULT_LEAGUE_ID, DEFAULT_SEASON } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
@@ -77,7 +81,7 @@ export function TeamDetailPage() {
   usePageMeta({
     title: team?.team.name ?? PAGE_META.teamDetail.title,
     description: team
-      ? `Team profile, stadium, coach, and ${season} season stats for ${team.team.name}.`
+      ? `Squad, stadium, coach, and ${season} season stats for ${team.team.name}.`
       : PAGE_META.teamDetail.description,
   })
 
@@ -168,6 +172,11 @@ export function TeamDetailPage() {
                 description="League stats are not available for this team in the current season."
               />
             )}
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">Team Squad</h2>
+            <TeamSquadSection teamId={id} league={league} season={season} />
           </section>
         </>
       )}
