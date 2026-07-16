@@ -4,8 +4,22 @@ import {
   PlayersFilters,
   type PlayersFilterState,
 } from '@/components/players/PlayersFilters'
+import { LEAGUE_LABEL } from '@/config/football'
 import { createPlayerProfile, createTeam } from '../../fixtures/players'
 import type { PlayerProfile } from '@/types/api-football'
+
+const leagueSeasonState = {
+  leagueId: 39,
+  season: 2024,
+  leagueName: 'Premier League',
+  setLeagueId: jest.fn(),
+  setSeason: jest.fn(),
+  setLeagueAndSeason: jest.fn(),
+}
+
+jest.mock('@/hooks/use-league-season', () => ({
+  useLeagueSeason: () => leagueSeasonState,
+}))
 
 const selectedProfile = createPlayerProfile({
   player: { id: 11, name: 'Selected Player' },
@@ -94,6 +108,12 @@ describe('components/players/PlayersFilters', () => {
       undefined) as typeof Element.prototype.releasePointerCapture
   })
 
+  beforeEach(() => {
+    leagueSeasonState.leagueId = 39
+    leagueSeasonState.season = 2024
+    leagueSeasonState.leagueName = 'Premier League'
+  })
+
   it('renders the heading and inactive filters without a clear button', () => {
     renderFilters()
 
@@ -106,6 +126,17 @@ describe('components/players/PlayersFilters', () => {
     expect(
       screen.queryByRole('button', { name: /clear filters/i }),
     ).not.toBeInTheDocument()
+  })
+
+  it('falls back to the default league label when leagueName is empty', () => {
+    leagueSeasonState.leagueName = ''
+    renderFilters()
+
+    expect(
+      screen.getByText(
+        `Search and filter players from the ${LEAGUE_LABEL}.`,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('forwards search changes and player selection', async () => {

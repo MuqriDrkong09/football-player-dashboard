@@ -25,13 +25,13 @@ describe('api/config', () => {
           VITE_API_BASE_URL: '',
           VITE_API_KEY: 'key',
         }).baseURL,
-      ).toBe('https://v3.football.api-sports.io')
+      ).toBe('/api')
     })
 
     it('treats missing env values as empty strings', () => {
       const config = createApiConfig({} as ImportMetaEnv)
 
-      expect(config.baseURL).toBe('https://v3.football.api-sports.io')
+      expect(config.baseURL).toBe('/api')
       expect(config.apiKey).toBe('')
       expect(config.timeout).toBe(30_000)
     })

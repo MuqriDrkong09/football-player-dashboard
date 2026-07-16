@@ -8,6 +8,10 @@ jest.mock('@/components/layout/DarkModeToggle', () => ({
   DarkModeToggle: () => <button type="button">Theme toggle</button>,
 }))
 
+jest.mock('@/components/league-season', () => ({
+  LeagueSeasonSwitcher: () => <div>League season switcher</div>,
+}))
+
 jest.mock('@/lib/notify', () => ({
   notify: {
     info: jest.fn(),
@@ -47,6 +51,7 @@ describe('components/layout/Navbar', () => {
     expect(
       screen.getByRole('button', { name: 'Theme toggle' }),
     ).toBeInTheDocument()
+    expect(screen.getByText('League season switcher')).toBeInTheDocument()
   })
 
   it('calls onMenuClick when the mobile menu button is pressed', async () => {

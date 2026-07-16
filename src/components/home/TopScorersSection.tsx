@@ -2,19 +2,15 @@ import { Link } from 'react-router-dom'
 import { PlayerCard } from '@/components/cards'
 import { HomeDataSection } from '@/components/home/HomeDataSection'
 import { Button } from '@/components/ui/button'
-import {
-  DEFAULT_LEAGUE_ID,
-  DEFAULT_SEASON,
-  HOME_LIMITS,
-  LEAGUE_LABEL,
-} from '@/config/football'
-import { useTopPlayers } from '@/hooks'
+import { HOME_LIMITS } from '@/config/football'
+import { useLeagueSeason, useTopPlayers } from '@/hooks'
 
 export function TopScorersSection() {
+  const { leagueId, season } = useLeagueSeason()
   const { players, isLoading, isError, errorMessage, refetch, isFetching } =
     useTopPlayers('scorers', {
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
     })
 
   const topScorers = players.slice(0, HOME_LIMITS.topScorers)
@@ -23,10 +19,10 @@ export function TopScorersSection() {
     <HomeDataSection
       titleId="top-scorers-heading"
       title="Top Scorers"
-      description={`Leading goal scorers in the ${LEAGUE_LABEL}`}
+      description="Leading goal scorers this season"
       action={
         <Button asChild variant="ghost" size="sm">
-          <Link to="/leaderboards">View leaderboards</Link>
+          <Link to="/leaderboards">Full table</Link>
         </Button>
       }
       isLoading={isLoading}
@@ -40,11 +36,7 @@ export function TopScorersSection() {
       skeletonCount={HOME_LIMITS.topScorers}
     >
       {topScorers.map((profile) => (
-        <PlayerCard
-          key={profile.player.id}
-          profile={profile}
-          highlight="goals"
-        />
+        <PlayerCard key={profile.player.id} profile={profile} highlight="goals" />
       ))}
     </HomeDataSection>
   )

@@ -9,9 +9,9 @@ import {
   TeamStatsSection,
 } from '@/components/team-detail'
 import { Button } from '@/components/ui/button'
-import { DEFAULT_LEAGUE_ID, DEFAULT_SEASON } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
 import {
+  useLeagueSeason,
   usePageMeta,
   useTeam,
   useTeamCoach,
@@ -25,8 +25,8 @@ export function TeamDetailPage() {
   const id = Number(teamId)
   const isValidId = Number.isFinite(id) && id > 0
 
-  const league = DEFAULT_LEAGUE_ID
-  const season = DEFAULT_SEASON
+  const { leagueId, season } = useLeagueSeason()
+  const league = leagueId
 
   const {
     team,

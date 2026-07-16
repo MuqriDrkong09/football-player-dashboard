@@ -7,6 +7,10 @@ jest.mock('@/components/layout/DarkModeToggle', () => ({
   DarkModeToggle: () => <button type="button">Theme toggle</button>,
 }))
 
+jest.mock('@/components/league-season', () => ({
+  LeagueSeasonSwitcher: () => <div>League season switcher</div>,
+}))
+
 jest.mock('@/lib/notify', () => ({
   notify: {
     info: jest.fn(),

@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DEFAULT_LEAGUE_ID, DEFAULT_SEASON } from '@/config/football'
-import { usePlayers } from '@/hooks'
+import { useLeagueSeason, usePlayers } from '@/hooks'
 import type { PlayerProfile } from '@/types/api-football'
 import { getPrimaryStatistics } from '@/utils/player'
 
@@ -42,24 +42,26 @@ export function PlayerCompareSelector({
   onSelect,
   onClear,
   disabledPlayerId,
-  season = DEFAULT_SEASON,
+  season,
 }: PlayerCompareSelectorProps) {
+  const { leagueId, season: contextSeason } = useLeagueSeason()
+  const resolvedSeason = season ?? contextSeason ?? DEFAULT_SEASON
   const [search, setSearch] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
 
   const isSearchMode = searchQuery.length >= 3
 
   const { players: browsePlayers, isLoading: isBrowseLoading } = usePlayers({
-    league: DEFAULT_LEAGUE_ID,
-    season,
+    league: leagueId || DEFAULT_LEAGUE_ID,
+    season: resolvedSeason,
     page: 1,
   })
 
   const { players: searchPlayers, isLoading: isSearchLoading } = usePlayers(
     {
       search: searchQuery,
-      league: DEFAULT_LEAGUE_ID,
-      season,
+      league: leagueId || DEFAULT_LEAGUE_ID,
+      season: resolvedSeason,
       page: 1,
     },
     { enabled: isSearchMode },

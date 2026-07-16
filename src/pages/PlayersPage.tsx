@@ -7,15 +7,16 @@ import {
   PlayersPagination,
   type PlayersFilterState,
 } from '@/components/players'
-import {
-  DEFAULT_LEAGUE_ID,
-  DEFAULT_SEASON,
-  formatSeasonLabel,
-  LEAGUE_LABEL,
-} from '@/config/football'
 import type { PlayerPosition } from '@/config/players'
-import { useDebounce, usePageMeta, usePlayers, useTeams } from '@/hooks'
+import {
+  useDebounce,
+  useLeagueSeason,
+  usePageMeta,
+  usePlayers,
+  useTeams,
+} from '@/hooks'
 import { PAGE_META } from '@/config/seo'
+import { formatSeasonLabel } from '@/config/football'
 import type { GetPlayersParams, PlayerProfile } from '@/types/api-football'
 import {
   filterPlayersByNationality,
@@ -33,21 +34,22 @@ const INITIAL_FILTERS: PlayersFilterState = {
 export function PlayersPage() {
   usePageMeta(PAGE_META.players)
   const navigate = useNavigate()
+  const { leagueId, season, leagueName } = useLeagueSeason()
   const [filters, setFilters] = useState<PlayersFilterState>(INITIAL_FILTERS)
   const [page, setPage] = useState(1)
   const searchQuery = useDebounce(filters.search.trim(), 300)
 
   const { teams, isLoading: isTeamsLoading } = useTeams({
-    league: DEFAULT_LEAGUE_ID,
-    season: DEFAULT_SEASON,
+    league: leagueId,
+    season,
   })
 
   const isSearchMode = searchQuery.length >= 3
 
   const queryParams = useMemo<GetPlayersParams>(() => {
     const params: GetPlayersParams = {
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
       page,
     }
 
@@ -60,7 +62,7 @@ export function PlayersPage() {
     }
 
     return params
-  }, [filters.teamId, isSearchMode, page, searchQuery])
+  }, [filters.teamId, isSearchMode, leagueId, page, searchQuery, season])
 
   const {
     players,
@@ -140,7 +142,7 @@ export function PlayersPage() {
           {hasClientFilters && ' (filtered)'}
         </p>
         <p className="text-sm text-muted-foreground">
-          {LEAGUE_LABEL} · {formatSeasonLabel(DEFAULT_SEASON)}
+          {leagueName} · {formatSeasonLabel(season)}
         </p>
       </div>
 

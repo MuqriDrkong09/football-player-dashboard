@@ -1,9 +1,16 @@
 import {
+  AVAILABLE_LEAGUES,
+  AVAILABLE_SEASONS,
   DEFAULT_LEAGUE_ID,
   DEFAULT_SEASON,
   formatSeasonLabel,
+  getLeagueById,
+  getLeagueLabel,
   HOME_LIMITS,
+  isAvailableLeagueId,
+  isAvailableSeason,
   LEAGUE_LABEL,
+  TEAM_FIXTURE_LIMITS,
 } from '@/config/football'
 
 describe('config/football', () => {
@@ -13,11 +20,25 @@ describe('config/football', () => {
     expect(LEAGUE_LABEL).toBe('Premier League')
   })
 
-  it('defines home section limits', () => {
+  it('defines home section and fixture limits', () => {
     expect(HOME_LIMITS.featuredPlayers).toBe(6)
     expect(HOME_LIMITS.topScorers).toBe(6)
     expect(HOME_LIMITS.topAssists).toBe(6)
     expect(HOME_LIMITS.popularTeams).toBe(8)
+    expect(TEAM_FIXTURE_LIMITS.upcoming).toBe(5)
+    expect(TEAM_FIXTURE_LIMITS.recent).toBe(5)
+  })
+
+  it('exposes selectable leagues and seasons', () => {
+    expect(AVAILABLE_LEAGUES.length).toBeGreaterThan(1)
+    expect(AVAILABLE_SEASONS).toContain(2024)
+    expect(getLeagueById(39)?.name).toBe('Premier League')
+    expect(getLeagueLabel(140)).toBe('La Liga')
+    expect(getLeagueLabel(999)).toBe('Premier League')
+    expect(isAvailableLeagueId(39)).toBe(true)
+    expect(isAvailableLeagueId(1)).toBe(false)
+    expect(isAvailableSeason(2023)).toBe(true)
+    expect(isAvailableSeason(2010)).toBe(false)
   })
 
   it('formats season labels as YYYY/YY', () => {

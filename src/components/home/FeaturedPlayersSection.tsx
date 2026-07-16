@@ -2,19 +2,15 @@ import { Link } from 'react-router-dom'
 import { PlayerCard } from '@/components/cards'
 import { HomeDataSection } from '@/components/home/HomeDataSection'
 import { Button } from '@/components/ui/button'
-import {
-  DEFAULT_LEAGUE_ID,
-  DEFAULT_SEASON,
-  HOME_LIMITS,
-  LEAGUE_LABEL,
-} from '@/config/football'
-import { usePlayers } from '@/hooks'
+import { HOME_LIMITS } from '@/config/football'
+import { useLeagueSeason, usePlayers } from '@/hooks'
 
 export function FeaturedPlayersSection() {
+  const { leagueId, season, leagueName } = useLeagueSeason()
   const { players, isLoading, isError, errorMessage, refetch, isFetching } =
     usePlayers({
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
       page: 1,
     })
 
@@ -24,7 +20,7 @@ export function FeaturedPlayersSection() {
     <HomeDataSection
       titleId="featured-players-heading"
       title="Featured Players"
-      description={`Standout performers from the ${LEAGUE_LABEL}`}
+      description={`Standout performers from the ${leagueName}`}
       action={
         <Button asChild variant="ghost" size="sm">
           <Link to="/players">View all</Link>

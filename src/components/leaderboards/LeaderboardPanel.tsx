@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 import { LeaderboardTable } from '@/components/leaderboards/LeaderboardTable'
-import { DEFAULT_LEAGUE_ID, DEFAULT_SEASON } from '@/config/football'
 import type { LeaderboardTab } from '@/config/leaderboards'
-import { useTopPlayers } from '@/hooks'
+import { useLeagueSeason, useTopPlayers } from '@/hooks'
 import { buildLeaderboardRows } from '@/utils/leaderboard'
 
 type LeaderboardPanelProps = {
@@ -10,10 +9,11 @@ type LeaderboardPanelProps = {
 }
 
 export function LeaderboardPanel({ tab }: LeaderboardPanelProps) {
+  const { leagueId, season } = useLeagueSeason()
   const { players, isLoading, isError, errorMessage, refetch, isFetching } =
     useTopPlayers(tab.queryKind, {
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
     })
 
   const rows = useMemo(() => buildLeaderboardRows(players), [players])

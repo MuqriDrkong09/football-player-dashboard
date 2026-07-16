@@ -2,11 +2,7 @@ import { useState } from 'react'
 import { LeaderboardPanel } from '@/components/leaderboards'
 import { PageShell } from '@/components/layout'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  DEFAULT_SEASON,
-  formatSeasonLabel,
-  LEAGUE_LABEL,
-} from '@/config/football'
+import { formatSeasonLabel } from '@/config/football'
 import {
   getLeaderboardTab,
   isLeaderboardTabValue,
@@ -14,15 +10,17 @@ import {
   type LeaderboardTabValue,
 } from '@/config/leaderboards'
 import { PAGE_META } from '@/config/seo'
+import { useLeagueSeason } from '@/hooks'
 
 export function LeaderboardsPage() {
   const [activeTab, setActiveTab] = useState<LeaderboardTabValue>('scorers')
   const currentTab = getLeaderboardTab(activeTab)
+  const { season, leagueName } = useLeagueSeason()
 
   return (
     <PageShell
       {...PAGE_META.leaderboards}
-      description={`Top performers in the ${LEAGUE_LABEL} · ${formatSeasonLabel(DEFAULT_SEASON)}`}
+      description={`Top performers in the ${leagueName} · ${formatSeasonLabel(season)}`}
     >
       <Tabs
         value={activeTab}

@@ -8,6 +8,17 @@ jest.mock('@/hooks/use-page-meta', () => ({
   usePageMeta: jest.fn(),
 }))
 
+jest.mock('@/hooks/use-league-season', () => ({
+  useLeagueSeason: () => ({
+    leagueId: 39,
+    season: 2024,
+    leagueName: 'Premier League',
+    setLeagueId: jest.fn(),
+    setSeason: jest.fn(),
+    setLeagueAndSeason: jest.fn(),
+  }),
+}))
+
 jest.mock('@/hooks/use-teams', () => ({
   useTeams: jest.fn(),
 }))

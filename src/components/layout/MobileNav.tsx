@@ -5,6 +5,7 @@ import { sidebarNavItems } from '@/config/navigation'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
 import { Logo } from '@/components/layout/Logo'
 import { NavLinks } from '@/components/layout/NavLinks'
+import { LeagueSeasonSwitcher } from '@/components/league-season'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -117,7 +118,8 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
           />
         </div>
 
-        <div className="border-t border-sidebar-border p-4">
+        <div className="space-y-3 border-t border-sidebar-border p-4">
+          <LeagueSeasonSwitcher showLabels size="compact" className="w-full" />
           <div className="flex items-center justify-between rounded-lg bg-sidebar-accent px-3 py-2">
             <span className="text-sm font-medium text-sidebar-accent-foreground">
               Theme

@@ -1,6 +1,10 @@
 import { useCallback, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { ErrorBoundary, RouteSuspense } from '@/components/feedback'
+import {
+  DataRefreshingIndicator,
+  ErrorBoundary,
+  RouteSuspense,
+} from '@/components/feedback'
 import {
   Container,
   Footer,
@@ -21,6 +25,7 @@ export function RootLayout() {
     <div className="flex min-h-svh flex-col bg-background text-foreground">
       <SkipLink />
       <Navbar onMenuClick={openMobileNav} />
+      <DataRefreshingIndicator />
       <MobileNav open={mobileNavOpen} onClose={closeMobileNav} />
 
       <div className="flex flex-1">

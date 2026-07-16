@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Toaster } from '@/components/ui/toast'
 import { FavoritesProvider } from '@/providers/FavoritesProvider'
+import { LeagueSeasonProvider } from '@/providers/LeagueSeasonProvider'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { ThemeProvider } from '@/providers/ThemeProvider'
 
@@ -13,8 +14,10 @@ export function AppProviders({ children }: AppProvidersProps) {
     <ThemeProvider>
       <FavoritesProvider>
         <QueryProvider>
-          {children}
-          <Toaster richColors closeButton position="top-right" expand />
+          <LeagueSeasonProvider>
+            {children}
+            <Toaster richColors closeButton position="top-right" expand />
+          </LeagueSeasonProvider>
         </QueryProvider>
       </FavoritesProvider>
     </ThemeProvider>

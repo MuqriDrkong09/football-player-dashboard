@@ -2,19 +2,15 @@ import { Link } from 'react-router-dom'
 import { TeamCard } from '@/components/cards'
 import { HomeDataSection } from '@/components/home/HomeDataSection'
 import { Button } from '@/components/ui/button'
-import {
-  DEFAULT_LEAGUE_ID,
-  DEFAULT_SEASON,
-  HOME_LIMITS,
-  LEAGUE_LABEL,
-} from '@/config/football'
-import { useTeams } from '@/hooks'
+import { HOME_LIMITS } from '@/config/football'
+import { useLeagueSeason, useTeams } from '@/hooks'
 
 export function PopularTeamsSection() {
+  const { leagueId, season, leagueName } = useLeagueSeason()
   const { teams, isLoading, isError, errorMessage, refetch, isFetching } =
     useTeams({
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
     })
 
   const popularTeams = teams.slice(0, HOME_LIMITS.popularTeams)
@@ -23,7 +19,7 @@ export function PopularTeamsSection() {
     <HomeDataSection
       titleId="popular-teams-heading"
       title="Popular Teams"
-      description={`Clubs competing in the ${LEAGUE_LABEL}`}
+      description={`Clubs competing in the ${leagueName}`}
       action={
         <Button asChild variant="ghost" size="sm">
           <Link to="/teams">View all teams</Link>

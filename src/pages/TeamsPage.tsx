@@ -4,21 +4,17 @@ import { TeamCard } from '@/components/cards'
 import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import { PageShell } from '@/components/layout'
 import { Input } from '@/components/ui/input'
-import {
-  DEFAULT_LEAGUE_ID,
-  DEFAULT_SEASON,
-  formatSeasonLabel,
-  LEAGUE_LABEL,
-} from '@/config/football'
+import { formatSeasonLabel } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
-import { useTeams } from '@/hooks'
+import { useLeagueSeason, useTeams } from '@/hooks'
 
 export function TeamsPage() {
   const [search, setSearch] = useState('')
+  const { leagueId, season, leagueName } = useLeagueSeason()
   const { teams, isLoading, isError, errorMessage, refetch, isFetching } =
     useTeams({
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
     })
 
   const filteredTeams = useMemo(() => {
@@ -35,9 +31,9 @@ export function TeamsPage() {
   return (
     <PageShell
       {...PAGE_META.teams}
-      description={`All clubs in the ${LEAGUE_LABEL} · ${formatSeasonLabel(DEFAULT_SEASON)}`}
+      description={`All clubs in the ${leagueName} · ${formatSeasonLabel(season)}`}
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Input
           type="search"
           value={search}

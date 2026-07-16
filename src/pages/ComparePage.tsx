@@ -8,10 +8,8 @@ import {
   RouteSuspense,
 } from '@/components/feedback'
 import { PageShell } from '@/components/layout'
-import { SeasonSelector } from '@/components/player-detail/SeasonSelector'
-import { DEFAULT_SEASON, LEAGUE_LABEL } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
-import { usePlayer } from '@/hooks'
+import { useLeagueSeason, usePlayer } from '@/hooks'
 import { aggregatePlayerStatistics } from '@/utils/player'
 import { buildComparisonChartData } from '@/utils/compare'
 
@@ -22,14 +20,9 @@ const ComparisonCharts = lazy(() =>
 )
 
 export function ComparePage() {
-  const [season, setSeason] = useState(DEFAULT_SEASON)
+  const { season, leagueName } = useLeagueSeason()
   const [player1Id, setPlayer1Id] = useState<number | null>(null)
   const [player2Id, setPlayer2Id] = useState<number | null>(null)
-
-  const seasons = useMemo(() => {
-    const currentYear = new Date().getFullYear()
-    return Array.from({ length: 6 }, (_, index) => currentYear - index)
-  }, [])
 
   const {
     player: player1,
@@ -71,10 +64,7 @@ export function ComparePage() {
   return (
     <PageShell
       {...PAGE_META.compare}
-      description={`Select two players from the ${LEAGUE_LABEL} to compare their season statistics.`}
-      actions={
-        <SeasonSelector seasons={seasons} value={season} onChange={setSeason} />
-      }
+      description={`Select two players from the ${leagueName} to compare their season statistics.`}
     >
       <div className="grid gap-6 lg:grid-cols-2">
         <PlayerCompareSelector

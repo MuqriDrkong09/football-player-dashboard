@@ -1,4 +1,5 @@
-const DEFAULT_BASE_URL = 'https://v3.football.api-sports.io'
+/** Same-origin path proxied to API-Football in Vite (see vite.config.ts). */
+const DEFAULT_BASE_URL = '/api'
 
 type ApiEnv = Pick<ImportMetaEnv, 'VITE_API_BASE_URL' | 'VITE_API_KEY'>
 

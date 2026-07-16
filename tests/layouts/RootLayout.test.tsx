@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
@@ -5,6 +6,10 @@ import { RootLayout } from '@/layouts/RootLayout'
 
 jest.mock('@/components/layout/DarkModeToggle', () => ({
   DarkModeToggle: () => <button type="button">Theme toggle</button>,
+}))
+
+jest.mock('@/components/league-season', () => ({
+  LeagueSeasonSwitcher: () => <div>League season switcher</div>,
 }))
 
 jest.mock('@/lib/notify', () => ({
@@ -17,15 +22,21 @@ jest.mock('@/lib/notify', () => ({
 }))
 
 function renderRootLayout(initialPath = '/') {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+
   return render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route element={<RootLayout />}>
-          <Route index element={<p>Home outlet</p>} />
-          <Route path="players" element={<p>Players outlet</p>} />
-        </Route>
-      </Routes>
-    </MemoryRouter>,
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route element={<RootLayout />}>
+            <Route index element={<p>Home outlet</p>} />
+            <Route path="players" element={<p>Players outlet</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>,
   )
 }
 

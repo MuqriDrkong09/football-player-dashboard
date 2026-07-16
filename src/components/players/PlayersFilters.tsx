@@ -12,6 +12,7 @@ import {
 import { LEAGUE_LABEL } from '@/config/football'
 import { PLAYER_POSITIONS } from '@/config/players'
 import type { PlayerPosition } from '@/config/players'
+import { useLeagueSeason } from '@/hooks'
 import type { PlayerProfile, Team } from '@/types/api-football'
 
 export type PlayersFilterState = {
@@ -46,6 +47,7 @@ export function PlayersFilters({
   onTeamChange,
   onClearFilters,
 }: PlayersFiltersProps) {
+  const { leagueId, season, leagueName } = useLeagueSeason()
   const hasActiveFilters =
     filters.search.length > 0 ||
     filters.position !== 'all' ||
@@ -57,7 +59,7 @@ export function PlayersFilters({
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Players</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Search and filter players from the {LEAGUE_LABEL}.
+          Search and filter players from the {leagueName || LEAGUE_LABEL}.
         </p>
       </div>
 
@@ -66,6 +68,8 @@ export function PlayersFilters({
         onValueChange={onSearchChange}
         onSelect={onPlayerSelect}
         team={filters.teamId !== 'all' ? Number(filters.teamId) : undefined}
+        league={leagueId}
+        season={season}
         placeholder="Search by player name (min. 3 characters)…"
         aria-label="Search players by name"
       />

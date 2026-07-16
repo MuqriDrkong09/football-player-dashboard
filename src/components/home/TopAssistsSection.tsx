@@ -2,19 +2,15 @@ import { Link } from 'react-router-dom'
 import { PlayerCard } from '@/components/cards'
 import { HomeDataSection } from '@/components/home/HomeDataSection'
 import { Button } from '@/components/ui/button'
-import {
-  DEFAULT_LEAGUE_ID,
-  DEFAULT_SEASON,
-  HOME_LIMITS,
-  LEAGUE_LABEL,
-} from '@/config/football'
-import { useTopPlayers } from '@/hooks'
+import { HOME_LIMITS } from '@/config/football'
+import { useLeagueSeason, useTopPlayers } from '@/hooks'
 
 export function TopAssistsSection() {
+  const { leagueId, season, leagueName } = useLeagueSeason()
   const { players, isLoading, isError, errorMessage, refetch, isFetching } =
     useTopPlayers('assists', {
-      league: DEFAULT_LEAGUE_ID,
-      season: DEFAULT_SEASON,
+      league: leagueId,
+      season,
     })
 
   const topAssists = players.slice(0, HOME_LIMITS.topAssists)
@@ -23,7 +19,7 @@ export function TopAssistsSection() {
     <HomeDataSection
       titleId="top-assists-heading"
       title="Top Assists"
-      description={`Playmakers leading the assist charts in the ${LEAGUE_LABEL}`}
+      description={`Playmakers leading the assist charts in the ${leagueName}`}
       action={
         <Button asChild variant="ghost" size="sm">
           <Link to="/leaderboards">View leaderboards</Link>
