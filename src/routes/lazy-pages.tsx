@@ -28,6 +28,12 @@ export const TeamDetailPage = lazy(() =>
   })),
 )
 
+export const MatchDetailPage = lazy(() =>
+  import('@/pages/MatchDetailPage').then((module) => ({
+    default: module.MatchDetailPage,
+  })),
+)
+
 export const LeaderboardsPage = lazy(() =>
   import('@/pages/LeaderboardsPage').then((module) => ({
     default: module.LeaderboardsPage,

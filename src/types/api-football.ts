@@ -321,3 +321,88 @@ export interface StandingLeague {
 export interface StandingResponseItem {
   league: StandingLeague
 }
+
+export interface FixtureStatus {
+  long: string | null
+  short: string | null
+  elapsed: number | null
+}
+
+export interface FixtureVenue {
+  id: number | null
+  name: string | null
+  city: string | null
+}
+
+export interface FixtureInfo {
+  id: number
+  referee: string | null
+  timezone: string
+  date: string
+  timestamp: number
+  venue: FixtureVenue
+  status: FixtureStatus
+}
+
+export interface FixtureLeague {
+  id: number
+  name: string
+  country: string
+  logo: string
+  flag: string | null
+  season: number
+  round: string | null
+}
+
+export interface FixtureTeam {
+  id: number
+  name: string
+  logo: string
+  winner: boolean | null
+}
+
+export interface FixtureGoals {
+  home: number | null
+  away: number | null
+}
+
+export interface FixtureScoreLine {
+  home: number | null
+  away: number | null
+}
+
+export interface FixtureScore {
+  halftime: FixtureScoreLine
+  fulltime: FixtureScoreLine
+  extratime: FixtureScoreLine
+  penalty: FixtureScoreLine
+}
+
+export interface Fixture {
+  fixture: FixtureInfo
+  league: FixtureLeague
+  teams: {
+    home: FixtureTeam
+    away: FixtureTeam
+  }
+  goals: FixtureGoals
+  score: FixtureScore
+}
+
+export interface GetFixturesParams {
+  id?: number
+  ids?: string
+  live?: string
+  date?: string
+  league?: number
+  season?: number
+  team?: number
+  last?: number
+  next?: number
+  from?: string
+  to?: string
+  round?: string
+  status?: string
+  venue?: number
+  timezone?: string
+}

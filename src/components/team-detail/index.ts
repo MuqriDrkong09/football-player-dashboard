@@ -1,4 +1,6 @@
+export { FixtureCard } from './FixtureCard'
 export { SquadPlayerCard } from './SquadPlayerCard'
+export { TeamFixturesSection } from './TeamFixturesSection'
 export { TeamInfoSection } from './TeamInfoSection'
 export { TeamSquadSection } from './TeamSquadSection'
 export { TeamStatsSection } from './TeamStatsSection'

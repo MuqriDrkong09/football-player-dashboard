@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { isApiError } from '@/api'
 import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import {
+  TeamFixturesSection,
   TeamInfoSection,
   TeamSquadSection,
   TeamStatsSection,
@@ -81,7 +82,7 @@ export function TeamDetailPage() {
   usePageMeta({
     title: team?.team.name ?? PAGE_META.teamDetail.title,
     description: team
-      ? `Squad, stadium, coach, and ${season} season stats for ${team.team.name}.`
+      ? `Squad, fixtures, stadium, coach, and ${season} season stats for ${team.team.name}.`
       : PAGE_META.teamDetail.description,
   })
 
@@ -172,6 +173,11 @@ export function TeamDetailPage() {
                 description="League stats are not available for this team in the current season."
               />
             )}
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">Team Fixtures</h2>
+            <TeamFixturesSection teamId={id} league={league} season={season} />
           </section>
 
           <section className="space-y-4">

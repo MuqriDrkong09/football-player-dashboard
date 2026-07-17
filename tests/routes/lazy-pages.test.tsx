@@ -6,6 +6,7 @@ import {
   FavoritesPage,
   HomePage,
   LeaderboardsPage,
+  MatchDetailPage,
   NotFoundPage,
   PlayerDetailPage,
   PlayersPage,
@@ -33,6 +34,9 @@ jest.mock('@/pages/TeamDetailPage', () => ({
   TeamDetailPage: () => <div>Team detail page</div>,
 }))
 
+jest.mock('@/pages/MatchDetailPage', () => ({
+  MatchDetailPage: () => <div>Match detail page</div>,
+}))
 
 jest.mock('@/pages/LeaderboardsPage', () => ({
   LeaderboardsPage: () => <div>Leaderboards page</div>,
@@ -60,6 +64,7 @@ const lazyPages = [
   { Component: PlayerDetailPage, label: 'Player detail page' },
   { Component: TeamsPage, label: 'Teams page' },
   { Component: TeamDetailPage, label: 'Team detail page' },
+  { Component: MatchDetailPage, label: 'Match detail page' },
   { Component: LeaderboardsPage, label: 'Leaderboards page' },
 
   { Component: ComparePage, label: 'Compare page' },

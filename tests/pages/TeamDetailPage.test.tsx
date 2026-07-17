@@ -41,12 +41,17 @@ jest.mock('@/hooks/use-players', () => ({
   usePlayers: jest.fn(),
 }))
 
+jest.mock('@/hooks/use-team-fixtures', () => ({
+  useTeamFixtures: jest.fn(),
+}))
+
 import { usePageMeta } from '@/hooks/use-page-meta'
 import { useTeam } from '@/hooks/use-team'
 import { useTeamStatistics } from '@/hooks/use-team-statistics'
 import { useTeamStanding } from '@/hooks/use-team-standing'
 import { useTeamCoach } from '@/hooks/use-team-coach'
 import { usePlayers } from '@/hooks/use-players'
+import { useTeamFixtures } from '@/hooks/use-team-fixtures'
 
 const mockedUsePageMeta = usePageMeta as jest.MockedFunction<typeof usePageMeta>
 const mockedUseTeam = useTeam as jest.MockedFunction<typeof useTeam>
@@ -60,7 +65,9 @@ const mockedUseTeamCoach = useTeamCoach as jest.MockedFunction<
   typeof useTeamCoach
 >
 const mockedUsePlayers = usePlayers as jest.MockedFunction<typeof usePlayers>
-
+const mockedUseTeamFixtures = useTeamFixtures as jest.MockedFunction<
+  typeof useTeamFixtures
+>
 function mockTeam(
   partial: Partial<ReturnType<typeof useTeam>> = {},
 ) {
@@ -131,6 +138,22 @@ function mockSquad(partial: Partial<ReturnType<typeof usePlayers>> = {}) {
     isFetching: false,
     ...partial,
   } as ReturnType<typeof usePlayers>)
+}
+
+function mockFixtures(
+  partial: Partial<ReturnType<typeof useTeamFixtures>> = {},
+) {
+  mockedUseTeamFixtures.mockReturnValue({
+    upcoming: [],
+    recent: [],
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+    error: null,
+    errorMessage: null,
+    refetch: jest.fn(),
+    ...partial,
+  })
 }
 
 function createStatistics(): TeamStatistics {
@@ -217,6 +240,7 @@ describe('pages/TeamDetailPage', () => {
     mockStanding()
     mockCoach()
     mockSquad()
+    mockFixtures()
   })
 
   it('shows an invalid-team empty state for bad ids', () => {
@@ -289,6 +313,7 @@ describe('pages/TeamDetailPage', () => {
 
     expect(screen.getByText('Team Information')).toBeInTheDocument()
     expect(screen.getByText('Liverpool')).toBeInTheDocument()
+    expect(screen.getByText('Team Fixtures')).toBeInTheDocument()
     expect(screen.getByText('Team Squad')).toBeInTheDocument()
     expect(screen.getByText('No squad players')).toBeInTheDocument()
     expect(screen.getByText('No season statistics')).toBeInTheDocument()

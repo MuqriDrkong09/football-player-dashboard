@@ -51,5 +51,17 @@ export const queryKeys = {
       [...queryKeys.teams.all(), 'coach', params] as const,
     standing: (params: GetStandingsParams & { team: number }) =>
       [...queryKeys.teams.all(), 'standing', params] as const,
+    fixtures: (params: {
+      team: number
+      season: number
+      league?: number
+      upcomingLimit?: number
+      recentLimit?: number
+    }) => [...queryKeys.teams.all(), 'fixtures', params] as const,
+  },
+
+  fixtures: {
+    all: () => [...queryKeys.all, 'fixtures'] as const,
+    detail: (id: number) => [...queryKeys.fixtures.all(), 'detail', id] as const,
   },
 } as const

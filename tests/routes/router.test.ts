@@ -14,6 +14,7 @@ describe('routes/router', () => {
         '/players/:playerId',
         '/teams',
         '/teams/:teamId',
+        '/matches/:matchId',
         '/leaderboards',
 
         '/compare',

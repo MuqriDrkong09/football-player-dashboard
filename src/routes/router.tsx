@@ -6,6 +6,7 @@ import {
   FavoritesPage,
   HomePage,
   LeaderboardsPage,
+  MatchDetailPage,
   NotFoundPage,
   PlayerDetailPage,
   PlayersPage,
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       { path: 'players/:playerId', element: <PlayerDetailPage /> },
       { path: 'teams', element: <TeamsPage /> },
       { path: 'teams/:teamId', element: <TeamDetailPage /> },
+      { path: 'matches/:matchId', element: <MatchDetailPage /> },
 
       { path: 'leaderboards', element: <LeaderboardsPage /> },
       { path: 'compare', element: <ComparePage /> },

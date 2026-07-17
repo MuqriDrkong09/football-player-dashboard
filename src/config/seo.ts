@@ -41,7 +41,11 @@ export const PAGE_META = {
   },
   teamDetail: {
     title: 'Team Details',
-    description: `View club profile, stadium, coach, and season statistics for ${LEAGUE_LABEL} teams.`,
+    description: `View club profile, stadium, coach, fixtures, and season statistics for ${LEAGUE_LABEL} teams.`,
+  },
+  matchDetail: {
+    title: 'Match Details',
+    description: 'View kickoff time, competition, venue, and final score for a football match.',
   },
 
   leaderboards: {

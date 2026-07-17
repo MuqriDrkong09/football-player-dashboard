@@ -15,3 +15,9 @@ export {
   getStandings,
   getTeamStanding,
 } from './teams.service'
+
+export {
+  getFixtures,
+  getFixture,
+  getTeamSeasonFixtures,
+} from './fixtures.service'
