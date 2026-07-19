@@ -25,3 +25,9 @@ export type {
   LeaderboardSortKey,
   SortDirection,
 } from './leaderboard'
+export {
+  getStandingZone,
+  STANDING_ZONE_LEGEND,
+  STANDING_ZONE_STYLES,
+} from './standings'
+export type { StandingZone } from './standings'

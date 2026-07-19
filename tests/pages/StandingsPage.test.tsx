@@ -118,6 +118,12 @@ describe('pages/StandingsPage', () => {
       screen.getByText(/League table for the Premier League/i),
     ).toBeInTheDocument()
     expect(screen.getByText('Liverpool')).toBeInTheDocument()
+    expect(
+      screen.getByRole('list', { name: 'Qualification zones' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Champions League')).toBeInTheDocument()
+    expect(screen.getByText('Europa League')).toBeInTheDocument()
+    expect(screen.getByText('Relegation')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument()
   })
 

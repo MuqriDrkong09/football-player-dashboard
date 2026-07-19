@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import type { StandingRow } from '@/types/api-football'
+import { getStandingZone, STANDING_ZONE_STYLES } from '@/utils/standings'
 
 type StandingsTableProps = {
   rows: StandingRow[]
@@ -68,55 +69,65 @@ export function StandingsTable({ rows, className }: StandingsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.team.id}>
-              <TableCell className="text-right font-medium tabular-nums">
-                {row.rank}
-              </TableCell>
-              <TableCell>
-                <Link
-                  to={`/teams/${row.team.id}`}
-                  className="flex min-w-0 items-center gap-3 hover:text-primary"
-                >
-                  <LazyImage
-                    src={row.team.logo}
-                    alt={`${row.team.name} logo`}
-                    width={28}
-                    height={28}
-                    className="size-7 shrink-0 object-contain"
-                  />
-                  <span className="truncate font-medium">{row.team.name}</span>
-                </Link>
-              </TableCell>
-              <TableCell className="hidden text-right tabular-nums sm:table-cell">
-                {row.all.played}
-              </TableCell>
-              <TableCell className="hidden text-right tabular-nums md:table-cell">
-                {row.all.win}
-              </TableCell>
-              <TableCell className="hidden text-right tabular-nums md:table-cell">
-                {row.all.draw}
-              </TableCell>
-              <TableCell className="hidden text-right tabular-nums md:table-cell">
-                {row.all.lose}
-              </TableCell>
-              <TableCell className="hidden text-right tabular-nums lg:table-cell">
-                {row.all.goals.for}
-              </TableCell>
-              <TableCell className="hidden text-right tabular-nums lg:table-cell">
-                {row.all.goals.against}
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {row.goalsDiff > 0 ? `+${row.goalsDiff}` : row.goalsDiff}
-              </TableCell>
-              <TableCell className="text-right font-semibold tabular-nums">
-                {row.points}
-              </TableCell>
-              <TableCell className="hidden xl:table-cell">
-                <FormBadges form={row.form} />
-              </TableCell>
-            </TableRow>
-          ))}
+          {rows.map((row) => {
+            const zone = getStandingZone(row.description)
+            const zoneStyle = zone ? STANDING_ZONE_STYLES[zone] : undefined
+
+            return (
+              <TableRow
+                key={row.team.id}
+                className={cn(zoneStyle)}
+                data-zone={zone ?? undefined}
+                title={row.description ?? undefined}
+              >
+                <TableCell className="text-right font-medium tabular-nums">
+                  {row.rank}
+                </TableCell>
+                <TableCell>
+                  <Link
+                    to={`/teams/${row.team.id}`}
+                    className="flex min-w-0 items-center gap-3 hover:text-primary"
+                  >
+                    <LazyImage
+                      src={row.team.logo}
+                      alt={`${row.team.name} logo`}
+                      width={28}
+                      height={28}
+                      className="size-7 shrink-0 object-contain"
+                    />
+                    <span className="truncate font-medium">{row.team.name}</span>
+                  </Link>
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums sm:table-cell">
+                  {row.all.played}
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums md:table-cell">
+                  {row.all.win}
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums md:table-cell">
+                  {row.all.draw}
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums md:table-cell">
+                  {row.all.lose}
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums lg:table-cell">
+                  {row.all.goals.for}
+                </TableCell>
+                <TableCell className="hidden text-right tabular-nums lg:table-cell">
+                  {row.all.goals.against}
+                </TableCell>
+                <TableCell className="text-right tabular-nums">
+                  {row.goalsDiff > 0 ? `+${row.goalsDiff}` : row.goalsDiff}
+                </TableCell>
+                <TableCell className="text-right font-semibold tabular-nums">
+                  {row.points}
+                </TableCell>
+                <TableCell className="hidden xl:table-cell">
+                  <FormBadges form={row.form} />
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </div>

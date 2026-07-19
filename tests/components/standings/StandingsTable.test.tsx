@@ -17,6 +17,7 @@ describe('components/standings/StandingsTable', () => {
               points: 79,
               goalsDiff: 0,
               form: null,
+              description: 'Promotion - Europa League',
             }),
             createStandingRow({
               rank: 3,
@@ -24,6 +25,15 @@ describe('components/standings/StandingsTable', () => {
               points: 55,
               goalsDiff: -4,
               form: 'LDW',
+              description: null,
+            }),
+            createStandingRow({
+              rank: 18,
+              team: { id: 71, name: 'Norwich', logo: '' },
+              points: 20,
+              goalsDiff: -30,
+              form: 'LLL',
+              description: 'Relegation - Championship',
             }),
           ]}
         />
@@ -46,5 +56,12 @@ describe('components/standings/StandingsTable', () => {
     expect(screen.getAllByLabelText('Loss').length).toBeGreaterThan(0)
     expect(screen.getByText('—')).toBeInTheDocument()
     expect(container.querySelector('.standings-extra')).toBeInTheDocument()
+
+    expect(container.querySelector('[data-zone="champions-league"]')).toBeTruthy()
+    expect(container.querySelector('[data-zone="europa-league"]')).toBeTruthy()
+    expect(container.querySelector('[data-zone="relegation"]')).toBeTruthy()
+    expect(
+      container.querySelector('[title="Promotion - Europa League"]'),
+    ).toBeTruthy()
   })
 })

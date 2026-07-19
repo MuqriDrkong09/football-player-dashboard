@@ -5,6 +5,26 @@ import { StandingsTable } from '@/components/standings'
 import { formatSeasonLabel } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
 import { useLeagueSeason, useStandings } from '@/hooks'
+import { STANDING_ZONE_LEGEND } from '@/utils/standings'
+
+function StandingsLegend() {
+  return (
+    <ul
+      className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground"
+      aria-label="Qualification zones"
+    >
+      {STANDING_ZONE_LEGEND.map(({ zone, label, swatch }) => (
+        <li key={zone} className="flex items-center gap-2">
+          <span
+            className={`size-2.5 shrink-0 rounded-sm ${swatch}`}
+            aria-hidden="true"
+          />
+          <span>{label}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 export function StandingsPage() {
   const { leagueId, season, leagueName } = useLeagueSeason()
@@ -44,6 +64,7 @@ export function StandingsPage() {
 
       {!isLoading && !isError && hasRows && (
         <div className="space-y-8">
+          <StandingsLegend />
           {tables.map((table, index) => {
             const groupLabel = table[0]?.group
             const showGroupHeading =
