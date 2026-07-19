@@ -20,4 +20,5 @@ export {
   getFixtures,
   getFixture,
   getTeamSeasonFixtures,
+  getLeagueSeasonFixtures,
 } from './fixtures.service'

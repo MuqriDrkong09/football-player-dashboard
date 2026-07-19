@@ -4,12 +4,14 @@ import {
   AboutPage,
   ComparePage,
   FavoritesPage,
+  FixturesPage,
   HomePage,
   LeaderboardsPage,
   MatchDetailPage,
   NotFoundPage,
   PlayerDetailPage,
   PlayersPage,
+  StandingsPage,
   TeamDetailPage,
   TeamsPage,
 } from '@/routes/lazy-pages'
@@ -36,6 +38,14 @@ jest.mock('@/pages/TeamDetailPage', () => ({
 
 jest.mock('@/pages/MatchDetailPage', () => ({
   MatchDetailPage: () => <div>Match detail page</div>,
+}))
+
+jest.mock('@/pages/StandingsPage', () => ({
+  StandingsPage: () => <div>Standings page</div>,
+}))
+
+jest.mock('@/pages/FixturesPage', () => ({
+  FixturesPage: () => <div>Fixtures page</div>,
 }))
 
 jest.mock('@/pages/LeaderboardsPage', () => ({
@@ -65,6 +75,8 @@ const lazyPages = [
   { Component: TeamsPage, label: 'Teams page' },
   { Component: TeamDetailPage, label: 'Team detail page' },
   { Component: MatchDetailPage, label: 'Match detail page' },
+  { Component: StandingsPage, label: 'Standings page' },
+  { Component: FixturesPage, label: 'Fixtures page' },
   { Component: LeaderboardsPage, label: 'Leaderboards page' },
 
   { Component: ComparePage, label: 'Compare page' },

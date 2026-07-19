@@ -1,9 +1,7 @@
 import { Menu } from 'lucide-react'
-import { mainNavItems } from '@/config/navigation'
 import { Container } from '@/components/layout/Container'
 import { DarkModeToggle } from '@/components/layout/DarkModeToggle'
 import { Logo } from '@/components/layout/Logo'
-import { NavLinks } from '@/components/layout/NavLinks'
 import { LeagueSeasonSwitcher } from '@/components/league-season'
 import { Button } from '@/components/ui/button'
 
@@ -25,17 +23,10 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           >
             <Menu className="size-5" />
           </Button>
-          <Logo />
+          <Logo className="lg:hidden" />
         </div>
 
-        <NavLinks
-          items={mainNavItems}
-          orientation="horizontal"
-          className="hidden lg:flex"
-          ariaLabel="Primary navigation"
-        />
-
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <LeagueSeasonSwitcher size="compact" className="hidden sm:flex" />
           <DarkModeToggle />
         </div>

@@ -12,7 +12,7 @@ export function Logo({ className, showText = true }: LogoProps) {
     <Link
       to="/"
       className={cn(
-        'group flex items-center gap-2.5 rounded-md outline-none ring-ring transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2',
+        'group flex shrink-0 items-center gap-2.5 rounded-md outline-none ring-ring transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2',
         className,
       )}
       aria-label={`${APP_NAME} home`}
@@ -40,7 +40,7 @@ export function Logo({ className, showText = true }: LogoProps) {
         </svg>
       </span>
       {showText && (
-        <span className="hidden font-bold tracking-tight sm:inline">
+        <span className="hidden whitespace-nowrap font-bold tracking-tight sm:inline">
           <span className="text-foreground">{APP_NAME.split(' ')[0]}</span>{' '}
           <span className="text-primary">{APP_NAME.split(' ')[1]}</span>
         </span>

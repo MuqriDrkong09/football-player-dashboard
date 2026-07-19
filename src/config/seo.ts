@@ -47,6 +47,14 @@ export const PAGE_META = {
     title: 'Match Details',
     description: 'View kickoff time, competition, venue, and final score for a football match.',
   },
+  standings: {
+    title: 'Standings',
+    description: `League table and club form for the ${LEAGUE_LABEL}.`,
+  },
+  fixtures: {
+    title: 'Fixtures',
+    description: `Upcoming matches and recent results in the ${LEAGUE_LABEL}.`,
+  },
 
   leaderboards: {
     title: 'Leaderboards',

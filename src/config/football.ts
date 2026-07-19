@@ -13,6 +13,11 @@ export const TEAM_FIXTURE_LIMITS = {
   recent: 5,
 } as const
 
+export const LEAGUE_FIXTURE_LIMITS = {
+  upcoming: 10,
+  recent: 10,
+} as const
+
 export type LeagueOption = {
   id: number
   name: string

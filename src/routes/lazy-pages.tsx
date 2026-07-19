@@ -34,6 +34,18 @@ export const MatchDetailPage = lazy(() =>
   })),
 )
 
+export const StandingsPage = lazy(() =>
+  import('@/pages/StandingsPage').then((module) => ({
+    default: module.StandingsPage,
+  })),
+)
+
+export const FixturesPage = lazy(() =>
+  import('@/pages/FixturesPage').then((module) => ({
+    default: module.FixturesPage,
+  })),
+)
+
 export const LeaderboardsPage = lazy(() =>
   import('@/pages/LeaderboardsPage').then((module) => ({
     default: module.LeaderboardsPage,

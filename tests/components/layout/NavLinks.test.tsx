@@ -28,7 +28,7 @@ describe('components/layout/NavLinks', () => {
     const { container } = renderNav(<NavLinks items={items} />)
 
     const nav = screen.getByRole('navigation', { name: 'Main navigation' })
-    expect(nav).toHaveClass('flex', 'items-center', 'gap-1')
+    expect(nav).toHaveClass('flex', 'items-center', 'gap-0.5')
     expect(nav.className).not.toContain('flex-col')
 
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(

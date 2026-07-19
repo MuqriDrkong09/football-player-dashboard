@@ -32,17 +32,20 @@ export function LeagueSeasonSwitcher({
   const isRefreshing = fetchingCount > 0
 
   const triggerClassName =
-    size === 'compact' ? 'h-8 min-w-[8.5rem] text-xs' : 'h-9 min-w-[10rem]'
+    size === 'compact'
+      ? 'h-8 w-auto min-w-0 max-w-[9.5rem] shrink-0 text-xs'
+      : 'h-9 min-w-[10rem]'
 
   return (
     <div
       className={cn(
-        'flex flex-wrap items-end gap-2 sm:gap-3',
+        'flex flex-nowrap items-center gap-2',
+        showLabels && 'items-end gap-2 sm:gap-3',
         className,
       )}
       aria-busy={isRefreshing}
     >
-      <div className="space-y-1">
+      <div className={cn(showLabels && 'space-y-1')}>
         {showLabels && (
           <Label htmlFor="league-switcher" className="text-xs">
             League
@@ -70,7 +73,7 @@ export function LeagueSeasonSwitcher({
         </Select>
       </div>
 
-      <div className="space-y-1">
+      <div className={cn(showLabels && 'space-y-1')}>
         {showLabels && (
           <Label htmlFor="season-switcher" className="text-xs">
             Season
@@ -83,7 +86,10 @@ export function LeagueSeasonSwitcher({
         >
           <SelectTrigger
             id="season-switcher"
-            className={triggerClassName}
+            className={cn(
+              triggerClassName,
+              size === 'compact' && 'max-w-[6.5rem]',
+            )}
             aria-label="Select season"
           >
             <SelectValue placeholder="Season" />

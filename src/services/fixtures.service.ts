@@ -1,8 +1,12 @@
 import { apiGet } from '@/api/client'
-import { TEAM_FIXTURE_LIMITS } from '@/config/football'
+import {
+  LEAGUE_FIXTURE_LIMITS,
+  TEAM_FIXTURE_LIMITS,
+} from '@/config/football'
 import type {
   Fixture,
   GetFixturesParams,
+  LeagueSeasonParams,
 } from '@/types/api-football'
 import {
   pickRecentFixtures,
@@ -50,6 +54,28 @@ export async function getTeamSeasonFixtures(
     team: params.team,
     season: params.season,
     ...(params.league != null ? { league: params.league } : {}),
+  })
+
+  return {
+    upcoming: pickUpcomingFixtures(fixtures, upcomingLimit),
+    recent: pickRecentFixtures(fixtures, recentLimit),
+  }
+}
+
+/** Free-plan safe league fixtures: league + season, split client-side. */
+export async function getLeagueSeasonFixtures(
+  params: LeagueSeasonParams,
+  limits: {
+    upcoming?: number
+    recent?: number
+  } = {},
+): Promise<TeamSeasonFixturesResult> {
+  const upcomingLimit = limits.upcoming ?? LEAGUE_FIXTURE_LIMITS.upcoming
+  const recentLimit = limits.recent ?? LEAGUE_FIXTURE_LIMITS.recent
+
+  const fixtures = await getFixtures({
+    league: params.league,
+    season: params.season,
   })
 
   return {

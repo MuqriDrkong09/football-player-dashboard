@@ -13,6 +13,8 @@ describe('config/navigation', () => {
     expect(mainNavItems.map((item) => item.href)).toEqual([
       '/players',
       '/teams',
+      '/standings',
+      '/fixtures',
       '/leaderboards',
       '/compare',
       '/favorites',

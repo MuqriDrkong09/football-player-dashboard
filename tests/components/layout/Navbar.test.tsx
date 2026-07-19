@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { Navbar } from '@/components/layout/Navbar'
-import { mainNavItems } from '@/config/navigation'
 
 jest.mock('@/components/layout/DarkModeToggle', () => ({
   DarkModeToggle: () => <button type="button">Theme toggle</button>,
@@ -30,7 +29,7 @@ function renderNavbar(onMenuClick = jest.fn()) {
 }
 
 describe('components/layout/Navbar', () => {
-  it('renders the header chrome with logo, primary nav, and theme toggle', () => {
+  it('renders the header chrome with logo, league filters, and theme toggle', () => {
     renderNavbar()
 
     expect(screen.getByRole('banner')).toBeInTheDocument()
@@ -38,16 +37,8 @@ describe('components/layout/Navbar', () => {
       screen.getByRole('link', { name: /Football Dashboard home/i }),
     ).toHaveAttribute('href', '/')
     expect(
-      screen.getByRole('navigation', { name: 'Primary navigation' }),
-    ).toBeInTheDocument()
-
-    for (const item of mainNavItems) {
-      expect(screen.getByRole('link', { name: item.label })).toHaveAttribute(
-        'href',
-        item.href,
-      )
-    }
-
+      screen.queryByRole('navigation', { name: 'Primary navigation' }),
+    ).not.toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Theme toggle' }),
     ).toBeInTheDocument()

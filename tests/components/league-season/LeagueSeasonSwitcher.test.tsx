@@ -93,16 +93,16 @@ describe('components/league-season/LeagueSeasonSwitcher', () => {
       <LeagueSeasonSwitcher size="compact" className="switcher-extra" />,
     )
 
-    expect(container.firstChild).toHaveClass('switcher-extra')
+    expect(container.firstChild).toHaveClass('switcher-extra', 'flex-nowrap')
     expect(screen.getByRole('combobox', { name: 'Select league' })).toHaveClass(
       'h-8',
-      'min-w-[8.5rem]',
       'text-xs',
+      'max-w-[9.5rem]',
     )
     expect(screen.getByRole('combobox', { name: 'Select season' })).toHaveClass(
       'h-8',
-      'min-w-[8.5rem]',
       'text-xs',
+      'max-w-[6.5rem]',
     )
     expect(screen.queryByText('League')).not.toBeInTheDocument()
     expect(screen.queryByText('Season')).not.toBeInTheDocument()

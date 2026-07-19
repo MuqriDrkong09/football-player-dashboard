@@ -6,6 +6,7 @@ import { apiGet } from '@/api/client'
 import {
   getFixture,
   getFixtures,
+  getLeagueSeasonFixtures,
   getTeamSeasonFixtures,
 } from '@/services/fixtures.service'
 import { createFixture } from '../fixtures/fixtures'
@@ -141,5 +142,31 @@ describe('services/fixtures.service', () => {
     expect(result.upcoming[0]?.fixture.id).toBe(3)
     expect(result.recent).toHaveLength(1)
     expect(result.recent[0]?.fixture.id).toBe(2)
+  })
+
+  it('fetches league season fixtures without team or next/last params', async () => {
+    const upcoming = createFixture({
+      id: 10,
+      statusShort: 'NS',
+      date: '2099-08-17T14:00:00+00:00',
+    })
+
+    mockedApiGet.mockResolvedValueOnce({
+      data: [upcoming],
+      results: 1,
+      paging: { current: 1, total: 1 },
+    })
+
+    await expect(
+      getLeagueSeasonFixtures({ league: 39, season: 2024 }),
+    ).resolves.toEqual({
+      upcoming: [upcoming],
+      recent: [],
+    })
+
+    expect(mockedApiGet).toHaveBeenCalledWith('/fixtures', {
+      league: 39,
+      season: 2024,
+    })
   })
 })

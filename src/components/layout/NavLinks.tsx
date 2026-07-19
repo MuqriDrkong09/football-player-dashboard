@@ -21,7 +21,7 @@ export function NavLinks({
     <nav
       className={cn(
         orientation === 'horizontal'
-          ? 'flex items-center gap-1'
+          ? 'flex items-center gap-0.5'
           : 'flex flex-col gap-1',
         className,
       )}
@@ -35,8 +35,8 @@ export function NavLinks({
           onClick={onNavigate}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
-              orientation === 'horizontal' && 'whitespace-nowrap',
+              'flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
+              orientation === 'horizontal' && 'shrink-0 whitespace-nowrap',
               isActive
                 ? 'bg-primary/10 text-primary'
                 : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',

@@ -11,6 +11,7 @@ import {
   isAvailableSeason,
   LEAGUE_LABEL,
   TEAM_FIXTURE_LIMITS,
+  LEAGUE_FIXTURE_LIMITS,
 } from '@/config/football'
 
 describe('config/football', () => {
@@ -27,6 +28,8 @@ describe('config/football', () => {
     expect(HOME_LIMITS.popularTeams).toBe(8)
     expect(TEAM_FIXTURE_LIMITS.upcoming).toBe(5)
     expect(TEAM_FIXTURE_LIMITS.recent).toBe(5)
+    expect(LEAGUE_FIXTURE_LIMITS.upcoming).toBe(10)
+    expect(LEAGUE_FIXTURE_LIMITS.recent).toBe(10)
   })
 
   it('exposes selectable leagues and seasons', () => {
