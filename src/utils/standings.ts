@@ -1,9 +1,13 @@
+import type { StandingRow } from '@/types/api-football'
+
 export type StandingZone =
   | 'champions-league'
   | 'europa-league'
   | 'conference-league'
   | 'relegation'
   | null
+
+export type StandingsSortBy = 'position' | 'points' | 'name'
 
 /**
  * Classify a standing row using API-Football's `description` field
@@ -58,3 +62,58 @@ export const STANDING_ZONE_LEGEND: Array<{
     swatch: 'bg-destructive',
   },
 ]
+
+export const FAVORITE_TEAM_ROW_STYLE =
+  'ring-2 ring-inset ring-primary/40 bg-primary/5'
+
+export function filterStandingRows(
+  rows: StandingRow[],
+  search: string,
+): StandingRow[] {
+  const query = search.trim().toLowerCase()
+  if (!query) return rows
+
+  return rows.filter((row) => row.team.name.toLowerCase().includes(query))
+}
+
+export function sortStandingRows(
+  rows: StandingRow[],
+  sortBy: StandingsSortBy,
+): StandingRow[] {
+  const next = [...rows]
+
+  switch (sortBy) {
+    case 'points':
+      return next.sort(
+        (a, b) => b.points - a.points || a.rank - b.rank || a.team.id - b.team.id,
+      )
+    case 'name':
+      return next.sort(
+        (a, b) =>
+          a.team.name.localeCompare(b.team.name) || a.rank - b.rank,
+      )
+    case 'position':
+    default:
+      return next.sort((a, b) => a.rank - b.rank || a.team.id - b.team.id)
+  }
+}
+
+export function getFavoriteTeamNames(
+  favorites: Array<{ teamName: string | null }>,
+): Set<string> {
+  const names = new Set<string>()
+
+  for (const favorite of favorites) {
+    const name = favorite.teamName?.trim().toLowerCase()
+    if (name) names.add(name)
+  }
+
+  return names
+}
+
+export function isFavoriteStandingTeam(
+  teamName: string,
+  favoriteTeamNames: Set<string>,
+): boolean {
+  return favoriteTeamNames.has(teamName.trim().toLowerCase())
+}

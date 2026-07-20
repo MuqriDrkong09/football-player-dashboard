@@ -26,8 +26,13 @@ export type {
   SortDirection,
 } from './leaderboard'
 export {
+  filterStandingRows,
+  getFavoriteTeamNames,
   getStandingZone,
+  isFavoriteStandingTeam,
+  sortStandingRows,
   STANDING_ZONE_LEGEND,
   STANDING_ZONE_STYLES,
+  FAVORITE_TEAM_ROW_STYLE,
 } from './standings'
-export type { StandingZone } from './standings'
+export type { StandingZone, StandingsSortBy } from './standings'

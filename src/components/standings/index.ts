@@ -1,1 +1,2 @@
-export { StandingsTable } from './StandingsTable'
+export { StandingsTable, FormBadges } from './StandingsTable'
+export { StandingsToolbar } from './StandingsToolbar'

@@ -1,11 +1,18 @@
+import { useMemo, useState } from 'react'
 import { ListOrdered } from 'lucide-react'
 import { EmptyState, LoadingSkeleton, QueryError } from '@/components/feedback'
 import { PageShell } from '@/components/layout'
-import { StandingsTable } from '@/components/standings'
+import { StandingsTable, StandingsToolbar } from '@/components/standings'
 import { formatSeasonLabel } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
-import { useLeagueSeason, useStandings } from '@/hooks'
-import { STANDING_ZONE_LEGEND } from '@/utils/standings'
+import { useFavorites, useLeagueSeason, useStandings } from '@/hooks'
+import {
+  filterStandingRows,
+  getFavoriteTeamNames,
+  sortStandingRows,
+  STANDING_ZONE_LEGEND,
+  type StandingsSortBy,
+} from '@/utils/standings'
 
 function StandingsLegend() {
   return (
@@ -22,12 +29,22 @@ function StandingsLegend() {
           <span>{label}</span>
         </li>
       ))}
+      <li className="flex items-center gap-2">
+        <span
+          className="size-2.5 shrink-0 rounded-sm bg-primary"
+          aria-hidden="true"
+        />
+        <span>Favorite team</span>
+      </li>
     </ul>
   )
 }
 
 export function StandingsPage() {
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState<StandingsSortBy>('position')
   const { leagueId, season, leagueName } = useLeagueSeason()
+  const { favorites } = useFavorites()
   const {
     tables,
     isLoading,
@@ -37,7 +54,21 @@ export function StandingsPage() {
     isFetching,
   } = useStandings({ league: leagueId, season })
 
-  const hasRows = tables.some((table) => table.length > 0)
+  const favoriteTeamNames = useMemo(
+    () => getFavoriteTeamNames(favorites),
+    [favorites],
+  )
+
+  const displayTables = useMemo(
+    () =>
+      tables.map((table) =>
+        sortStandingRows(filterStandingRows(table, search), sortBy),
+      ),
+    [tables, search, sortBy],
+  )
+
+  const hasSourceRows = tables.some((table) => table.length > 0)
+  const hasDisplayRows = displayTables.some((table) => table.length > 0)
 
   return (
     <PageShell
@@ -54,7 +85,7 @@ export function StandingsPage() {
         />
       )}
 
-      {!isLoading && !isError && !hasRows && (
+      {!isLoading && !isError && !hasSourceRows && (
         <EmptyState
           icon={ListOrdered}
           title="No standings"
@@ -62,28 +93,52 @@ export function StandingsPage() {
         />
       )}
 
-      {!isLoading && !isError && hasRows && (
-        <div className="space-y-8">
+      {!isLoading && !isError && hasSourceRows && (
+        <div className="space-y-6">
+          <StandingsToolbar
+            search={search}
+            onSearchChange={setSearch}
+            sortBy={sortBy}
+            onSortByChange={setSortBy}
+          />
           <StandingsLegend />
-          {tables.map((table, index) => {
-            const groupLabel = table[0]?.group
-            const showGroupHeading =
-              tables.length > 1 ||
-              (groupLabel != null &&
-                groupLabel.length > 0 &&
-                !groupLabel.toLowerCase().includes(leagueName.toLowerCase()))
 
-            return (
-              <section key={groupLabel ?? index} className="space-y-3">
-                {showGroupHeading && groupLabel && (
-                  <h2 className="text-sm font-semibold tracking-tight text-muted-foreground uppercase">
-                    {groupLabel}
-                  </h2>
-                )}
-                <StandingsTable rows={table} />
-              </section>
-            )
-          })}
+          {!hasDisplayRows ? (
+            <EmptyState
+              icon={ListOrdered}
+              title="No teams found"
+              description="Try a different team name."
+            />
+          ) : (
+            <div className="space-y-8">
+              {displayTables.map((table, index) => {
+                if (table.length === 0) return null
+
+                const groupLabel = table[0]?.group
+                const showGroupHeading =
+                  tables.length > 1 ||
+                  (groupLabel != null &&
+                    groupLabel.length > 0 &&
+                    !groupLabel
+                      .toLowerCase()
+                      .includes(leagueName.toLowerCase()))
+
+                return (
+                  <section key={groupLabel ?? index} className="space-y-3">
+                    {showGroupHeading && groupLabel && (
+                      <h2 className="text-sm font-semibold tracking-tight text-muted-foreground uppercase">
+                        {groupLabel}
+                      </h2>
+                    )}
+                    <StandingsTable
+                      rows={table}
+                      favoriteTeamNames={favoriteTeamNames}
+                    />
+                  </section>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
     </PageShell>
