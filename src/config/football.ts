@@ -32,7 +32,7 @@ export const AVAILABLE_LEAGUES: readonly LeagueOption[] = [
   { id: 61, name: 'Ligue 1', country: 'France' },
 ] as const
 
-export const AVAILABLE_SEASONS = [2024, 2023, 2022, 2021, 2020] as const
+export const AVAILABLE_SEASONS = [2024, 2023, 2022] as const
 
 export const LEAGUE_LABEL = 'Premier League'
 
@@ -50,6 +50,11 @@ export function isAvailableLeagueId(leagueId: number): boolean {
 
 export function isAvailableSeason(season: number): boolean {
   return (AVAILABLE_SEASONS as readonly number[]).includes(season)
+}
+
+/** Keep only seasons the current API plan can query (2022–2024 on free). */
+export function filterAccessibleSeasons(seasons: number[]): number[] {
+  return seasons.filter(isAvailableSeason)
 }
 
 /** Formats a season start year as `YYYY/YY` (e.g. 2024 → 2024/25). */

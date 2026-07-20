@@ -1,3 +1,5 @@
 export { PlayerProfileHeader } from './PlayerProfileHeader'
+export { PlayerSeasonHistory } from './PlayerSeasonHistory'
+export { PlayerSeasonTrendsCharts } from './PlayerSeasonTrendsCharts'
 export { PlayerStatsGrid } from './PlayerStatsGrid'
 export { SeasonSelector } from './SeasonSelector'

@@ -3,6 +3,7 @@ import {
   AVAILABLE_SEASONS,
   DEFAULT_LEAGUE_ID,
   DEFAULT_SEASON,
+  filterAccessibleSeasons,
   formatSeasonLabel,
   getLeagueById,
   getLeagueLabel,
@@ -34,14 +35,18 @@ describe('config/football', () => {
 
   it('exposes selectable leagues and seasons', () => {
     expect(AVAILABLE_LEAGUES.length).toBeGreaterThan(1)
-    expect(AVAILABLE_SEASONS).toContain(2024)
+    expect(AVAILABLE_SEASONS).toEqual([2024, 2023, 2022])
     expect(getLeagueById(39)?.name).toBe('Premier League')
     expect(getLeagueLabel(140)).toBe('La Liga')
     expect(getLeagueLabel(999)).toBe('Premier League')
     expect(isAvailableLeagueId(39)).toBe(true)
     expect(isAvailableLeagueId(1)).toBe(false)
     expect(isAvailableSeason(2023)).toBe(true)
+    expect(isAvailableSeason(2021)).toBe(false)
     expect(isAvailableSeason(2010)).toBe(false)
+    expect(filterAccessibleSeasons([2024, 2021, 2022, 2019])).toEqual([
+      2024, 2022,
+    ])
   })
 
   it('formats season labels as YYYY/YY', () => {

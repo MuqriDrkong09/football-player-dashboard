@@ -1,13 +1,22 @@
 export {
   aggregatePlayerStatistics,
+  buildPlayerSeasonHistoryRow,
+  buildPlayerSeasonHistoryRows,
   filterPlayersByNationality,
   filterPlayersByPosition,
   getCompetitionChartData,
+  getPrimaryCompetition,
   getPrimaryStatistics,
+  getSeasonTrendChartData,
   getUniqueNationalities,
   pickDefaultSeason,
 } from './player'
-export type { AggregatedPlayerStats, CompetitionChartData } from './player'
+export type {
+  AggregatedPlayerStats,
+  CompetitionChartData,
+  PlayerSeasonHistoryRow,
+  SeasonTrendChartPoint,
+} from './player'
 export {
   buildComparisonChartData,
   COMPARISON_STATS,

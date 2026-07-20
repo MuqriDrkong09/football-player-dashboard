@@ -1,9 +1,10 @@
-import { lazy, useMemo, useState } from 'react'
+import { lazy, useMemo, useRef, useState } from 'react'
 import { UserX } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { isApiError } from '@/api'
 import {
   PlayerProfileHeader,
+  PlayerSeasonHistory,
   PlayerStatsGrid,
 } from '@/components/player-detail'
 import {
@@ -13,11 +14,18 @@ import {
   RouteSuspense,
 } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
+import { filterAccessibleSeasons } from '@/config/football'
 import { PAGE_META } from '@/config/seo'
-import { usePageMeta, usePlayer, usePlayerSeasons } from '@/hooks'
+import {
+  usePageMeta,
+  usePlayer,
+  usePlayerSeasonHistory,
+  usePlayerSeasons,
+} from '@/hooks'
 import {
   aggregatePlayerStatistics,
   getCompetitionChartData,
+  getSeasonTrendChartData,
   pickDefaultSeason,
 } from '@/utils/player'
 
@@ -27,10 +35,19 @@ const PlayerStatsCharts = lazy(() =>
   })),
 )
 
+const PlayerSeasonTrendsCharts = lazy(() =>
+  import('@/components/player-detail/PlayerSeasonTrendsCharts').then(
+    (module) => ({
+      default: module.PlayerSeasonTrendsCharts,
+    }),
+  ),
+)
+
 export function PlayerDetailPage() {
   const { playerId } = useParams<{ playerId: string }>()
   const id = Number(playerId)
   const isValidId = Number.isFinite(id) && id > 0
+  const seasonStatsRef = useRef<HTMLElement>(null)
 
   const [selectedSeason, setSelectedSeason] = useState<number | null>(null)
 
@@ -43,8 +60,19 @@ export function PlayerDetailPage() {
     isFetching: isSeasonsFetching,
   } = usePlayerSeasons({ player: id }, { enabled: isValidId })
 
-  const defaultSeason = useMemo(() => pickDefaultSeason(seasons), [seasons])
-  const activeSeason = selectedSeason ?? defaultSeason
+  const accessibleSeasons = useMemo(
+    () => filterAccessibleSeasons(seasons),
+    [seasons],
+  )
+
+  const defaultSeason = useMemo(
+    () => pickDefaultSeason(accessibleSeasons),
+    [accessibleSeasons],
+  )
+  const activeSeason =
+    selectedSeason != null && accessibleSeasons.includes(selectedSeason)
+      ? selectedSeason
+      : defaultSeason
 
   const {
     player,
@@ -59,6 +87,17 @@ export function PlayerDetailPage() {
     { enabled: isValidId && activeSeason !== null },
   )
 
+  const {
+    rows: seasonHistoryRows,
+    isLoading: isSeasonHistoryLoading,
+    isError: isSeasonHistoryError,
+    errorMessage: seasonHistoryErrorMessage,
+    refetch: refetchSeasonHistory,
+    isFetching: isSeasonHistoryFetching,
+  } = usePlayerSeasonHistory(id, accessibleSeasons, {
+    enabled: isValidId && !isSeasonsError && accessibleSeasons.length > 0,
+  })
+
   const aggregatedStats = useMemo(
     () => (player ? aggregatePlayerStatistics(player.statistics) : null),
     [player],
@@ -69,22 +108,40 @@ export function PlayerDetailPage() {
     [player],
   )
 
-  const isLoading = isSeasonsLoading || isPlayerLoading || activeSeason === null
+  const seasonTrendData = useMemo(
+    () => getSeasonTrendChartData(seasonHistoryRows),
+    [seasonHistoryRows],
+  )
+
+  const isLoading =
+    isSeasonsLoading ||
+    (accessibleSeasons.length > 0 &&
+      (activeSeason === null || isPlayerLoading))
   const isError = isSeasonsError || isPlayerError
   const isNotFound =
     isPlayerError && isApiError(playerError) && playerError.code === 'NOT_FOUND'
   const isRetrying = isSeasonsFetching || isPlayerFetching
+  const hasNoAccessibleSeasons =
+    !isSeasonsLoading && !isSeasonsError && accessibleSeasons.length === 0
 
   usePageMeta({
     title: player?.player.name ?? PAGE_META.playerDetail.title,
     description: player
-      ? `Season stats and charts for ${player.player.name}.`
+      ? `Season history and stats for ${player.player.name}.`
       : PAGE_META.playerDetail.description,
   })
 
   const handleRetry = () => {
     if (isSeasonsError) refetchSeasons()
     if (isPlayerError) refetchPlayer()
+  }
+
+  const handleSeasonSelect = (season: number) => {
+    setSelectedSeason(season)
+    seasonStatsRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
   }
 
   if (!isValidId) {
@@ -133,11 +190,24 @@ export function PlayerDetailPage() {
 
       {isLoading && !isError && <LoadingSkeleton variant="page" />}
 
-      {!isLoading && !isError && (
+      {hasNoAccessibleSeasons && !isError && (
+        <EmptyState
+          icon={UserX}
+          title="No accessible seasons"
+          description="Season data for this player is outside the free plan range (2022–2024)."
+          action={
+            <Button asChild variant="outline">
+              <Link to="/players">Browse players</Link>
+            </Button>
+          }
+        />
+      )}
+
+      {!isLoading && !isError && !hasNoAccessibleSeasons && (
         <>
           <PlayerProfileHeader
             profile={player}
-            seasons={seasons}
+            seasons={accessibleSeasons}
             selectedSeason={activeSeason}
             onSeasonChange={setSelectedSeason}
             isSeasonsLoading={isSeasonsLoading}
@@ -145,6 +215,38 @@ export function PlayerDetailPage() {
           />
 
           <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">
+              Season History
+            </h2>
+            <PlayerSeasonHistory
+              rows={seasonHistoryRows}
+              selectedSeason={activeSeason}
+              onSeasonSelect={handleSeasonSelect}
+              isLoading={isSeasonHistoryLoading}
+              isError={isSeasonHistoryError}
+              errorMessage={seasonHistoryErrorMessage}
+              onRetry={() => {
+                void refetchSeasonHistory()
+              }}
+              isRetrying={isSeasonHistoryFetching}
+            />
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">
+              Season Trends
+            </h2>
+            <RouteSuspense
+              fallback={<LoadingSkeleton variant="list" count={2} />}
+            >
+              <PlayerSeasonTrendsCharts
+                data={seasonTrendData}
+                isLoading={isSeasonHistoryLoading}
+              />
+            </RouteSuspense>
+          </section>
+
+          <section ref={seasonStatsRef} className="space-y-4 scroll-mt-24">
             <h2 className="text-xl font-bold tracking-tight">
               Season Statistics
             </h2>

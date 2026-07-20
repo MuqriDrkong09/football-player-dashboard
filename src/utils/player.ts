@@ -1,6 +1,6 @@
 import type { PlayerProfile, PlayerStatistics } from '@/types/api-football'
 import type { PlayerPosition } from '@/config/players'
-import { DEFAULT_SEASON } from '@/config/football'
+import { DEFAULT_SEASON, formatSeasonLabel } from '@/config/football'
 
 export interface AggregatedPlayerStats {
   goals: number
@@ -21,8 +21,42 @@ export interface CompetitionChartData {
   redCards: number
 }
 
+export interface PlayerSeasonHistoryRow {
+  season: number
+  team: { id: number; name: string; logo: string } | null
+  league: { id: number; name: string; logo: string } | null
+  appearances: number
+  goals: number
+  assists: number
+  minutes: number
+  yellowCards: number
+  redCards: number
+}
+
+export interface SeasonTrendChartPoint {
+  season: number
+  label: string
+  goals: number
+  assists: number
+  matches: number
+  minutes: number
+}
+
 export function getPrimaryStatistics(profile: PlayerProfile) {
   return profile.statistics[0] ?? null
+}
+
+/** Prefer the competition with the most appearances for team/league display. */
+export function getPrimaryCompetition(
+  statistics: PlayerStatistics[],
+): PlayerStatistics | null {
+  if (statistics.length === 0) return null
+
+  return statistics.reduce((best, current) => {
+    const bestApps = best.games?.appearences ?? 0
+    const currentApps = current.games?.appearences ?? 0
+    return currentApps > bestApps ? current : best
+  })
 }
 
 export function aggregatePlayerStatistics(
@@ -46,6 +80,78 @@ export function aggregatePlayerStatistics(
       redCards: 0,
     },
   )
+}
+
+export function buildPlayerSeasonHistoryRow(
+  season: number,
+  profile: PlayerProfile | null,
+): PlayerSeasonHistoryRow {
+  if (!profile || profile.statistics.length === 0) {
+    return {
+      season,
+      team: null,
+      league: null,
+      appearances: 0,
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      yellowCards: 0,
+      redCards: 0,
+    }
+  }
+
+  const primary = getPrimaryCompetition(profile.statistics)
+  const aggregated = aggregatePlayerStatistics(profile.statistics)
+
+  // Empty statistics already returned above, so a primary competition always exists.
+  const competition = primary!
+
+  return {
+    season,
+    team: {
+      id: competition.team.id,
+      name: competition.team.name,
+      logo: competition.team.logo,
+    },
+    league: {
+      id: competition.league.id,
+      name: competition.league.name,
+      logo: competition.league.logo,
+    },
+    appearances: aggregated.matches,
+    goals: aggregated.goals,
+    assists: aggregated.assists,
+    minutes: aggregated.minutes,
+    yellowCards: aggregated.yellowCards,
+    redCards: aggregated.redCards,
+  }
+}
+
+export function buildPlayerSeasonHistoryRows(
+  seasons: number[],
+  profilesBySeason: Map<number, PlayerProfile | null>,
+): PlayerSeasonHistoryRow[] {
+  return [...seasons]
+    .sort((a, b) => b - a)
+    .map((season) =>
+      buildPlayerSeasonHistoryRow(season, profilesBySeason.get(season) ?? null),
+    )
+}
+
+/** Chronological season points for goals/assists/matches/minutes trend charts. */
+export function getSeasonTrendChartData(
+  rows: PlayerSeasonHistoryRow[],
+): SeasonTrendChartPoint[] {
+  return [...rows]
+    .sort((a, b) => a.season - b.season)
+    .map((row) => ({
+      season: row.season,
+      label: formatSeasonLabel(row.season),
+      goals: row.goals,
+      assists: row.assists,
+      matches: row.appearances,
+      minutes: row.minutes,
+    }))
 }
 
 export function getCompetitionChartData(

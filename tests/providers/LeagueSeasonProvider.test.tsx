@@ -118,11 +118,11 @@ describe('providers/LeagueSeasonProvider', () => {
     })
 
     act(() => {
-      result.current.setLeagueAndSeason(78, 2021)
+      result.current.setLeagueAndSeason(78, 2022)
     })
 
     expect(result.current.leagueId).toBe(78)
-    expect(result.current.season).toBe(2021)
+    expect(result.current.season).toBe(2022)
     expect(result.current.leagueName).toBe('Bundesliga')
     expect(client.invalidateQueries).toHaveBeenCalled()
   })

@@ -102,14 +102,14 @@ describe('store/league-season', () => {
   })
 
   it('writes to the real localStorage when called without a custom scope', () => {
-    writeLeagueSeasonPreference({ leagueId: 78, season: 2021 })
+    writeLeagueSeasonPreference({ leagueId: 78, season: 2022 })
 
     expect(localStorage.getItem(LEAGUE_SEASON_STORAGE_KEY)).toBe(
-      JSON.stringify({ leagueId: 78, season: 2021 }),
+      JSON.stringify({ leagueId: 78, season: 2022 }),
     )
     expect(readLeagueSeasonPreference()).toEqual({
       leagueId: 78,
-      season: 2021,
+      season: 2022,
     })
   })
 

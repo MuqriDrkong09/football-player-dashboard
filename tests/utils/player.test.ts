@@ -1,10 +1,14 @@
 import { DEFAULT_SEASON } from '@/config/football'
 import {
   aggregatePlayerStatistics,
+  buildPlayerSeasonHistoryRow,
+  buildPlayerSeasonHistoryRows,
   filterPlayersByNationality,
   filterPlayersByPosition,
   getCompetitionChartData,
+  getPrimaryCompetition,
   getPrimaryStatistics,
+  getSeasonTrendChartData,
   getUniqueNationalities,
   pickDefaultSeason,
 } from '@/utils/player'
@@ -28,6 +32,153 @@ describe('utils/player', () => {
   it('returns null when statistics are empty', () => {
     const profile = createPlayerProfile({ statistics: [] })
     expect(getPrimaryStatistics(profile)).toBeNull()
+    expect(getPrimaryCompetition([])).toBeNull()
+  })
+
+  it('picks the competition with the most appearances', () => {
+    const primary = getPrimaryCompetition([
+      createStatistics({
+        team: { id: 1, name: 'Cup Side', logo: '' },
+        league: {
+          id: 2,
+          name: 'Cup',
+          country: 'England',
+          logo: '',
+          flag: null,
+          season: 2024,
+        },
+        games: {
+          appearences: 3,
+          lineups: 3,
+          minutes: 270,
+          number: 9,
+          position: 'Attacker',
+          rating: '7',
+          captain: false,
+        },
+      }),
+      createStatistics({
+        team: { id: 33, name: 'Manchester United', logo: 'mu.png' },
+        games: {
+          appearences: 20,
+          lineups: 18,
+          minutes: 1600,
+          number: 10,
+          position: 'Attacker',
+          rating: '7.5',
+          captain: false,
+        },
+      }),
+    ])
+
+    expect(primary?.team.name).toBe('Manchester United')
+    expect(primary?.league.name).toBe('Premier League')
+  })
+
+  it('treats missing appearance counts as zero when choosing a primary competition', () => {
+    const withMissingApps = getPrimaryCompetition([
+      {
+        ...createStatistics({
+          team: { id: 1, name: 'No Games Object', logo: '' },
+        }),
+        games: undefined,
+      } as ReturnType<typeof createStatistics>,
+      createStatistics({
+        team: { id: 2, name: 'Null Appearances', logo: '' },
+        games: {
+          appearences: null,
+          lineups: 0,
+          minutes: null,
+          number: null,
+          position: 'Midfielder',
+          rating: null,
+          captain: false,
+        },
+      }),
+      createStatistics({
+        team: { id: 3, name: 'Has Appearances', logo: '' },
+        games: {
+          appearences: 1,
+          lineups: 1,
+          minutes: 90,
+          number: 8,
+          position: 'Midfielder',
+          rating: '7',
+          captain: false,
+        },
+      }),
+    ])
+
+    expect(withMissingApps?.team.name).toBe('Has Appearances')
+  })
+
+  it('builds season history rows from profiles', () => {
+    const profile = createPlayerProfile({
+      statistics: [
+        createStatistics({
+          goals: { total: 10, conceded: 0, assists: 4, saves: null },
+          cards: { yellow: 2, yellowred: 0, red: 1 },
+        }),
+        createStatistics({
+          team: { id: 2, name: 'Cup Side', logo: '' },
+          league: {
+            id: 48,
+            name: 'FA Cup',
+            country: 'England',
+            logo: 'cup.png',
+            flag: null,
+            season: 2023,
+          },
+          games: {
+            appearences: 2,
+            lineups: 2,
+            minutes: 180,
+            number: 10,
+            position: 'Attacker',
+            rating: '7',
+            captain: false,
+          },
+          goals: { total: 1, conceded: 0, assists: 1, saves: null },
+          cards: { yellow: 0, yellowred: 0, red: 0 },
+        }),
+      ],
+    })
+
+    expect(buildPlayerSeasonHistoryRow(2023, null)).toMatchObject({
+      season: 2023,
+      team: null,
+      league: null,
+      appearances: 0,
+      goals: 0,
+    })
+    expect(buildPlayerSeasonHistoryRow(2023, createPlayerProfile({ statistics: [] }))).toMatchObject({
+      season: 2023,
+      team: null,
+      appearances: 0,
+    })
+
+    const row = buildPlayerSeasonHistoryRow(2023, profile)
+    expect(row).toMatchObject({
+      season: 2023,
+      team: { id: 33, name: 'Manchester United' },
+      league: { id: 39, name: 'Premier League' },
+      appearances: 22,
+      goals: 11,
+      assists: 5,
+      minutes: 1780,
+      yellowCards: 2,
+      redCards: 1,
+    })
+
+    const rows = buildPlayerSeasonHistoryRows(
+      [2022, 2024],
+      new Map([
+        [2024, profile],
+        [2022, null],
+      ]),
+    )
+    expect(rows.map((item) => item.season)).toEqual([2024, 2022])
+    expect(rows[1]?.goals).toBe(0)
   })
 
   it('aggregates statistics across competitions', () => {
@@ -146,10 +297,54 @@ describe('utils/player', () => {
     })
   })
 
-  it('picks the default or latest available season', () => {
+  it('builds chronological season trend chart points', () => {
+    const points = getSeasonTrendChartData([
+      {
+        season: 2024,
+        team: null,
+        league: null,
+        appearances: 30,
+        goals: 12,
+        assists: 5,
+        minutes: 2600,
+        yellowCards: 1,
+        redCards: 0,
+      },
+      {
+        season: 2022,
+        team: null,
+        league: null,
+        appearances: 20,
+        goals: 8,
+        assists: 3,
+        minutes: 1800,
+        yellowCards: 2,
+        redCards: 0,
+      },
+    ])
+
+    expect(points).toEqual([
+      {
+        season: 2022,
+        label: '2022/23',
+        goals: 8,
+        assists: 3,
+        matches: 20,
+        minutes: 1800,
+      },
+      {
+        season: 2024,
+        label: '2024/25',
+        goals: 12,
+        assists: 5,
+        matches: 30,
+        minutes: 2600,
+      },
+    ])
+  })
     expect(pickDefaultSeason([])).toBeNull()
     expect(pickDefaultSeason([2022, DEFAULT_SEASON, 2023])).toBe(DEFAULT_SEASON)
-    expect(pickDefaultSeason([2020, 2021])).toBe(2021)
+    expect(pickDefaultSeason([2022, 2023])).toBe(2023)
   })
 
   it('filters players by position and nationality', () => {
