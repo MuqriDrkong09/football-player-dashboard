@@ -1,10 +1,12 @@
 import { DEFAULT_SEASON } from '@/config/football'
 import {
   aggregatePlayerStatistics,
+  buildCareerTimelineStints,
   buildPlayerSeasonHistoryRow,
   buildPlayerSeasonHistoryRows,
   filterPlayersByNationality,
   filterPlayersByPosition,
+  formatSeasonsLabel,
   getCompetitionChartData,
   getPrimaryCompetition,
   getPrimaryStatistics,
@@ -297,6 +299,185 @@ describe('utils/player', () => {
     })
   })
 
+  it('groups season rows into consecutive club stints', () => {
+    const stints = buildCareerTimelineStints([
+      {
+        season: 2024,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+        appearances: 34,
+        goals: 20,
+        assists: 8,
+        minutes: 2900,
+        yellowCards: 0,
+        redCards: 0,
+      },
+      {
+        season: 2023,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+        appearances: 30,
+        goals: 18,
+        assists: 6,
+        minutes: 2700,
+        yellowCards: 0,
+        redCards: 0,
+      },
+      {
+        season: 2022,
+        team: { id: 50, name: 'Manchester City', logo: 'mc.png' },
+        league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+        appearances: 28,
+        goals: 15,
+        assists: 6,
+        minutes: 2400,
+        yellowCards: 0,
+        redCards: 0,
+      },
+      {
+        season: 2021,
+        team: null,
+        league: null,
+        appearances: 0,
+        goals: 0,
+        assists: 0,
+        minutes: 0,
+        yellowCards: 0,
+        redCards: 0,
+      },
+    ])
+
+    expect(stints).toHaveLength(2)
+    expect(stints[0]).toMatchObject({
+      team: { id: 50, name: 'Manchester City' },
+      seasonsLabel: '2022/23',
+      appearances: 28,
+      goals: 15,
+      assists: 6,
+    })
+    expect(stints[1]).toMatchObject({
+      team: { id: 40, name: 'Liverpool' },
+      seasonsLabel: '2023/24 – 2024/25',
+      appearances: 64,
+      goals: 38,
+      assists: 14,
+    })
+  })
+
+  it('returns no career stints when rows are empty or have no club data', () => {
+    expect(buildCareerTimelineStints([])).toEqual([])
+    expect(
+      buildCareerTimelineStints([
+        {
+          season: 2022,
+          team: null,
+          league: null,
+          appearances: 0,
+          goals: 0,
+          assists: 0,
+          minutes: 0,
+          yellowCards: 0,
+          redCards: 0,
+        },
+      ]),
+    ).toEqual([])
+  })
+
+  it('updates the league when merging consecutive seasons at the same club', () => {
+    const stints = buildCareerTimelineStints([
+      {
+        season: 2022,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: null,
+        appearances: 10,
+        goals: 4,
+        assists: 2,
+        minutes: 900,
+        yellowCards: 0,
+        redCards: 0,
+      },
+      {
+        season: 2023,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+        appearances: 20,
+        goals: 8,
+        assists: 3,
+        minutes: 1800,
+        yellowCards: 0,
+        redCards: 0,
+      },
+    ])
+
+    expect(stints).toHaveLength(1)
+    expect(stints[0]).toMatchObject({
+      team: { id: 40, name: 'Liverpool' },
+      league: { id: 39, name: 'Premier League' },
+      seasonsLabel: '2022/23 – 2023/24',
+      appearances: 30,
+      goals: 12,
+      assists: 5,
+    })
+  })
+
+  it('keeps the existing league when a merged season has no league data', () => {
+    const stints = buildCareerTimelineStints([
+      {
+        season: 2022,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+        appearances: 10,
+        goals: 4,
+        assists: 2,
+        minutes: 900,
+        yellowCards: 0,
+        redCards: 0,
+      },
+      {
+        season: 2023,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: null,
+        appearances: 20,
+        goals: 8,
+        assists: 3,
+        minutes: 1800,
+        yellowCards: 0,
+        redCards: 0,
+      },
+    ])
+
+    expect(stints[0]?.league?.name).toBe('Premier League')
+  })
+
+  it('formats season labels for empty, single, and multi-season ranges', () => {
+    expect(formatSeasonsLabel([])).toBe('')
+    expect(formatSeasonsLabel([2024])).toBe('2024/25')
+    expect(formatSeasonsLabel([2022, 2024])).toBe('2022/23 – 2024/25')
+  })
+
+  it('builds a single-season stint label for one club', () => {
+    const stints = buildCareerTimelineStints([
+      {
+        season: 2024,
+        team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+        league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+        appearances: 34,
+        goals: 20,
+        assists: 8,
+        minutes: 2900,
+        yellowCards: 0,
+        redCards: 0,
+      },
+    ])
+
+    expect(stints).toEqual([
+      expect.objectContaining({
+        seasonsLabel: '2024/25',
+        appearances: 34,
+      }),
+    ])
+  })
+
   it('builds chronological season trend chart points', () => {
     const points = getSeasonTrendChartData([
       {
@@ -342,6 +523,8 @@ describe('utils/player', () => {
       },
     ])
   })
+
+  it('picks the default season from available seasons', () => {
     expect(pickDefaultSeason([])).toBeNull()
     expect(pickDefaultSeason([2022, DEFAULT_SEASON, 2023])).toBe(DEFAULT_SEASON)
     expect(pickDefaultSeason([2022, 2023])).toBe(2023)

@@ -1,3 +1,4 @@
+export { CareerTimeline } from './CareerTimeline'
 export { PlayerProfileHeader } from './PlayerProfileHeader'
 export { PlayerSeasonHistory } from './PlayerSeasonHistory'
 export { PlayerSeasonTrendsCharts } from './PlayerSeasonTrendsCharts'

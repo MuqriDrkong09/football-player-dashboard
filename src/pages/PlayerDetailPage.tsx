@@ -3,6 +3,7 @@ import { UserX } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { isApiError } from '@/api'
 import {
+  CareerTimeline,
   PlayerProfileHeader,
   PlayerSeasonHistory,
   PlayerStatsGrid,
@@ -213,6 +214,22 @@ export function PlayerDetailPage() {
             isSeasonsLoading={isSeasonsLoading}
             isLoading={false}
           />
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">
+              Career Timeline
+            </h2>
+            <CareerTimeline
+              rows={seasonHistoryRows}
+              isLoading={isSeasonHistoryLoading}
+              isError={isSeasonHistoryError}
+              errorMessage={seasonHistoryErrorMessage}
+              onRetry={() => {
+                void refetchSeasonHistory()
+              }}
+              isRetrying={isSeasonHistoryFetching}
+            />
+          </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-bold tracking-tight">

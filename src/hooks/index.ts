@@ -1,4 +1,5 @@
 export { useDebounce } from './use-debounce'
+export { useInView } from './use-in-view'
 export { usePageMeta } from './use-page-meta'
 export { useTheme } from './use-theme'
 export { useLeagueSeason } from './use-league-season'

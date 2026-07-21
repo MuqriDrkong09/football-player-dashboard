@@ -42,6 +42,16 @@ export interface SeasonTrendChartPoint {
   minutes: number
 }
 
+export interface CareerTimelineStint {
+  team: { id: number; name: string; logo: string }
+  league: { id: number; name: string; logo: string } | null
+  seasons: number[]
+  seasonsLabel: string
+  appearances: number
+  goals: number
+  assists: number
+}
+
 export function getPrimaryStatistics(profile: PlayerProfile) {
   return profile.statistics[0] ?? null
 }
@@ -136,6 +146,67 @@ export function buildPlayerSeasonHistoryRows(
     .map((season) =>
       buildPlayerSeasonHistoryRow(season, profilesBySeason.get(season) ?? null),
     )
+}
+
+export function formatSeasonsLabel(seasons: number[]): string {
+  if (seasons.length === 0) return ''
+
+  const sorted = [...seasons].sort((a, b) => a - b)
+  const first = sorted[0]!
+  const last = sorted[sorted.length - 1]!
+
+  if (first === last) return formatSeasonLabel(first)
+  return `${formatSeasonLabel(first)} – ${formatSeasonLabel(last)}`
+}
+
+/** Groups season rows into consecutive club stints for a career timeline. */
+export function buildCareerTimelineStints(
+  rows: PlayerSeasonHistoryRow[],
+): CareerTimelineStint[] {
+  const chronological = [...rows]
+    .filter((row) => row.team !== null)
+    .sort((a, b) => a.season - b.season)
+
+  if (chronological.length === 0) return []
+
+  const stints: CareerTimelineStint[] = []
+  let current: Omit<CareerTimelineStint, 'seasonsLabel'> | null = null
+
+  for (const row of chronological) {
+    const team = row.team!
+
+    if (current && current.team.id === team.id) {
+      current.seasons.push(row.season)
+      current.appearances += row.appearances
+      current.goals += row.goals
+      current.assists += row.assists
+      if (row.league) current.league = row.league
+      continue
+    }
+
+    if (current) {
+      stints.push({
+        ...current,
+        seasonsLabel: formatSeasonsLabel(current.seasons),
+      })
+    }
+
+    current = {
+      team,
+      league: row.league,
+      seasons: [row.season],
+      appearances: row.appearances,
+      goals: row.goals,
+      assists: row.assists,
+    }
+  }
+
+  stints.push({
+    ...current!,
+    seasonsLabel: formatSeasonsLabel(current!.seasons),
+  })
+
+  return stints
 }
 
 /** Chronological season points for goals/assists/matches/minutes trend charts. */

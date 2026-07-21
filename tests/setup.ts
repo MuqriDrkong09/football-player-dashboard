@@ -29,3 +29,26 @@ Object.defineProperty(window, 'ResizeObserver', {
 })
 
 Element.prototype.scrollIntoView = jest.fn()
+
+class IntersectionObserverMock {
+  private readonly callback: IntersectionObserverCallback
+
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback
+  }
+
+  observe(element: Element) {
+    this.callback(
+      [{ isIntersecting: true, target: element } as IntersectionObserverEntry],
+      this as unknown as IntersectionObserver,
+    )
+  }
+
+  unobserve() {}
+  disconnect() {}
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  value: IntersectionObserverMock,
+})
