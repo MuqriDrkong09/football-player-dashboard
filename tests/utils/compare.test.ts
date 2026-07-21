@@ -1,7 +1,9 @@
 import {
   COMPARISON_STATS,
   buildComparisonChartData,
+  buildSeasonComparisonDeltas,
   countComparisonWins,
+  countSeasonComparisonChanges,
   getBetterPlayer,
   type ComparisonStatKey,
 } from '@/utils/compare'
@@ -89,6 +91,39 @@ describe('utils/compare', () => {
       player1: 3,
       player2: 2,
       ties: 1,
+    })
+  })
+
+  it('builds season comparison deltas and change totals', () => {
+    const deltas = buildSeasonComparisonDeltas(player1, player2)
+
+    expect(deltas.find((item) => item.key === 'goals')).toMatchObject({
+      baseline: 20,
+      compare: 15,
+      delta: -5,
+      improved: false,
+      declined: true,
+      unchanged: false,
+    })
+    expect(deltas.find((item) => item.key === 'assists')).toMatchObject({
+      delta: 5,
+      improved: true,
+      declined: false,
+    })
+    expect(deltas.find((item) => item.key === 'minutes')).toMatchObject({
+      delta: 0,
+      unchanged: true,
+    })
+    expect(deltas.find((item) => item.key === 'yellowCards')).toMatchObject({
+      delta: -2,
+      improved: true,
+      declined: false,
+    })
+
+    expect(countSeasonComparisonChanges(deltas)).toEqual({
+      improved: 2,
+      declined: 3,
+      unchanged: 1,
     })
   })
 })

@@ -13,6 +13,7 @@ import {
   getSeasonTrendChartData,
   getUniqueNationalities,
   pickDefaultSeason,
+  seasonHistoryRowToAggregatedStats,
 } from '@/utils/player'
 import {
   createPlayerProfile,
@@ -181,6 +182,29 @@ describe('utils/player', () => {
     )
     expect(rows.map((item) => item.season)).toEqual([2024, 2022])
     expect(rows[1]?.goals).toBe(0)
+  })
+
+  it('maps season history rows to aggregated stats', () => {
+    expect(
+      seasonHistoryRowToAggregatedStats({
+        season: 2024,
+        team: null,
+        league: null,
+        appearances: 34,
+        goals: 20,
+        assists: 8,
+        minutes: 2900,
+        yellowCards: 3,
+        redCards: 0,
+      }),
+    ).toEqual({
+      goals: 20,
+      assists: 8,
+      minutes: 2900,
+      matches: 34,
+      yellowCards: 3,
+      redCards: 0,
+    })
   })
 
   it('aggregates statistics across competitions', () => {

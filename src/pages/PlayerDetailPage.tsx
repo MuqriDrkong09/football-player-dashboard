@@ -44,6 +44,12 @@ const PlayerSeasonTrendsCharts = lazy(() =>
   ),
 )
 
+const SeasonComparison = lazy(() =>
+  import('@/components/player-detail/SeasonComparison').then((module) => ({
+    default: module.SeasonComparison,
+  })),
+)
+
 export function PlayerDetailPage() {
   const { playerId } = useParams<{ playerId: string }>()
   const id = Number(playerId)
@@ -259,6 +265,27 @@ export function PlayerDetailPage() {
               <PlayerSeasonTrendsCharts
                 data={seasonTrendData}
                 isLoading={isSeasonHistoryLoading}
+              />
+            </RouteSuspense>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">
+              Season Comparison
+            </h2>
+            <RouteSuspense
+              fallback={<LoadingSkeleton variant="list" count={4} />}
+            >
+              <SeasonComparison
+                rows={seasonHistoryRows}
+                seasons={accessibleSeasons}
+                isLoading={isSeasonHistoryLoading}
+                isError={isSeasonHistoryError}
+                errorMessage={seasonHistoryErrorMessage}
+                onRetry={() => {
+                  void refetchSeasonHistory()
+                }}
+                isRetrying={isSeasonHistoryFetching}
               />
             </RouteSuspense>
           </section>

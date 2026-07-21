@@ -137,6 +137,19 @@ export function buildPlayerSeasonHistoryRow(
   }
 }
 
+export function seasonHistoryRowToAggregatedStats(
+  row: PlayerSeasonHistoryRow,
+): AggregatedPlayerStats {
+  return {
+    goals: row.goals,
+    assists: row.assists,
+    minutes: row.minutes,
+    matches: row.appearances,
+    yellowCards: row.yellowCards,
+    redCards: row.redCards,
+  }
+}
+
 export function buildPlayerSeasonHistoryRows(
   seasons: number[],
   profilesBySeason: Map<number, PlayerProfile | null>,

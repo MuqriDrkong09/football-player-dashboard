@@ -73,3 +73,47 @@ export function countComparisonWins(rows: ComparisonChartRow[]) {
     { player1: 0, player2: 0, ties: 0 },
   )
 }
+
+export type SeasonComparisonDelta = {
+  key: ComparisonStatKey
+  label: string
+  baseline: number
+  compare: number
+  delta: number
+  improved: boolean
+  declined: boolean
+  unchanged: boolean
+}
+
+export function buildSeasonComparisonDeltas(
+  baselineStats: AggregatedPlayerStats,
+  compareStats: AggregatedPlayerStats,
+): SeasonComparisonDelta[] {
+  return COMPARISON_STATS.map(({ key, label, higherIsBetter }) => {
+    const baseline = baselineStats[key]
+    const compare = compareStats[key]
+    const delta = compare - baseline
+
+    return {
+      key,
+      label,
+      baseline,
+      compare,
+      delta,
+      improved: higherIsBetter ? delta > 0 : delta < 0,
+      declined: higherIsBetter ? delta < 0 : delta > 0,
+      unchanged: delta === 0,
+    }
+  })
+}
+
+export function countSeasonComparisonChanges(deltas: SeasonComparisonDelta[]) {
+  return deltas.reduce(
+    (totals, item) => ({
+      improved: totals.improved + (item.improved ? 1 : 0),
+      declined: totals.declined + (item.declined ? 1 : 0),
+      unchanged: totals.unchanged + (item.unchanged ? 1 : 0),
+    }),
+    { improved: 0, declined: 0, unchanged: 0 },
+  )
+}

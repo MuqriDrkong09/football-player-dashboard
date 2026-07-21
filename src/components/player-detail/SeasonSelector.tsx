@@ -14,6 +14,9 @@ type SeasonSelectorProps = {
   value: number | null
   onChange: (season: number) => void
   isLoading?: boolean
+  label?: string
+  id?: string
+  disabledSeason?: number | null
 }
 
 export function SeasonSelector({
@@ -21,6 +24,9 @@ export function SeasonSelector({
   value,
   onChange,
   isLoading,
+  label = 'Season',
+  id = 'season-select',
+  disabledSeason = null,
 }: SeasonSelectorProps) {
   if (isLoading) {
     return (
@@ -35,18 +41,19 @@ export function SeasonSelector({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="season-select">Season</Label>
+      <Label htmlFor={id}>{label}</Label>
       <Select
         value={value != null ? String(value) : undefined}
         onValueChange={(next) => onChange(Number(next))}
       >
-        <SelectTrigger id="season-select" className="w-full sm:w-40">
+        <SelectTrigger id={id} className="w-full sm:w-40">
           <SelectValue placeholder="Select season" />
         </SelectTrigger>
         <SelectContent>
           {seasons
             .slice()
             .sort((a, b) => b - a)
+            .filter((season) => season !== disabledSeason)
             .map((season) => (
               <SelectItem key={season} value={String(season)}>
                 {formatSeasonLabel(season)}
