@@ -52,6 +52,17 @@ export interface CareerTimelineStint {
   assists: number
 }
 
+export interface CareerStatsSummary {
+  appearances: number
+  goals: number
+  assists: number
+  minutes: number
+  yellowCards: number
+  redCards: number
+  clubs: number
+  seasons: number
+}
+
 export function getPrimaryStatistics(profile: PlayerProfile) {
   return profile.statistics[0] ?? null
 }
@@ -220,6 +231,46 @@ export function buildCareerTimelineStints(
   })
 
   return stints
+}
+
+/** Aggregates career totals across all season history rows. */
+export function buildCareerStatisticsSummary(
+  rows: PlayerSeasonHistoryRow[],
+): CareerStatsSummary {
+  const clubIds = new Set<number>()
+  let seasons = 0
+
+  const totals = rows.reduce(
+    (acc, row) => {
+      if (row.team) {
+        clubIds.add(row.team.id)
+        seasons += 1
+      }
+
+      return {
+        appearances: acc.appearances + row.appearances,
+        goals: acc.goals + row.goals,
+        assists: acc.assists + row.assists,
+        minutes: acc.minutes + row.minutes,
+        yellowCards: acc.yellowCards + row.yellowCards,
+        redCards: acc.redCards + row.redCards,
+      }
+    },
+    {
+      appearances: 0,
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      yellowCards: 0,
+      redCards: 0,
+    },
+  )
+
+  return {
+    ...totals,
+    clubs: clubIds.size,
+    seasons,
+  }
 }
 
 /** Chronological season points for goals/assists/matches/minutes trend charts. */

@@ -2,6 +2,7 @@ import { DEFAULT_SEASON } from '@/config/football'
 import {
   aggregatePlayerStatistics,
   buildCareerTimelineStints,
+  buildCareerStatisticsSummary,
   buildPlayerSeasonHistoryRow,
   buildPlayerSeasonHistoryRows,
   filterPlayersByNationality,
@@ -320,6 +321,77 @@ describe('utils/player', () => {
       matches: 0,
       yellowCards: 0,
       redCards: 0,
+    })
+  })
+
+  it('aggregates career statistics across season history rows', () => {
+    expect(buildCareerStatisticsSummary([])).toEqual({
+      appearances: 0,
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      yellowCards: 0,
+      redCards: 0,
+      clubs: 0,
+      seasons: 0,
+    })
+
+    expect(
+      buildCareerStatisticsSummary([
+        {
+          season: 2024,
+          team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+          league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+          appearances: 34,
+          goals: 20,
+          assists: 8,
+          minutes: 2900,
+          yellowCards: 3,
+          redCards: 0,
+        },
+        {
+          season: 2023,
+          team: { id: 40, name: 'Liverpool', logo: 'liv.png' },
+          league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+          appearances: 30,
+          goals: 18,
+          assists: 6,
+          minutes: 2700,
+          yellowCards: 2,
+          redCards: 1,
+        },
+        {
+          season: 2022,
+          team: { id: 50, name: 'Manchester City', logo: 'mc.png' },
+          league: { id: 39, name: 'Premier League', logo: 'pl.png' },
+          appearances: 28,
+          goals: 15,
+          assists: 6,
+          minutes: 2400,
+          yellowCards: 1,
+          redCards: 0,
+        },
+        {
+          season: 2021,
+          team: null,
+          league: null,
+          appearances: 0,
+          goals: 0,
+          assists: 0,
+          minutes: 0,
+          yellowCards: 0,
+          redCards: 0,
+        },
+      ]),
+    ).toEqual({
+      appearances: 92,
+      goals: 53,
+      assists: 20,
+      minutes: 8000,
+      yellowCards: 6,
+      redCards: 1,
+      clubs: 2,
+      seasons: 3,
     })
   })
 
