@@ -2,6 +2,7 @@ export {
   getPlayer,
   getPlayers,
   getPlayerSeasons,
+  getPlayerTransfers,
   getTopPlayers,
   searchPlayers,
 } from './players.service'

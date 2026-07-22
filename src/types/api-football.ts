@@ -176,6 +176,31 @@ export interface GetPlayerSeasonsParams {
   player: number
 }
 
+export interface TransferTeam {
+  id: number
+  name: string
+  logo: string
+}
+
+export interface TransferRecord {
+  date: string | null
+  type: string | null
+  teams: {
+    in: TransferTeam
+    out: TransferTeam
+  }
+}
+
+export interface PlayerTransfers {
+  player: Pick<PlayerInfo, 'id' | 'name'>
+  update: string
+  transfers: TransferRecord[]
+}
+
+export interface GetPlayerTransfersParams {
+  player: number
+}
+
 export interface SearchPlayersParams {
   search: string
   league?: number

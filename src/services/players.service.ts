@@ -3,9 +3,11 @@ import type {
   GetPlayerParams,
   GetPlayersParams,
   GetPlayerSeasonsParams,
+  GetPlayerTransfersParams,
   LeagueSeasonParams,
   PaginatedResult,
   PlayerProfile,
+  PlayerTransfers,
   SearchPlayersParams,
   TopPlayersKind,
 } from '@/types/api-football'
@@ -35,6 +37,13 @@ export async function getPlayerSeasons(
 ): Promise<number[]> {
   const { data } = await apiGet<number[]>('/players/seasons', params)
   return data
+}
+
+export async function getPlayerTransfers(
+  params: GetPlayerTransfersParams,
+): Promise<PlayerTransfers | null> {
+  const { data } = await apiGet<PlayerTransfers[]>('/transfers', params)
+  return data[0] ?? null
 }
 
 export async function searchPlayers(

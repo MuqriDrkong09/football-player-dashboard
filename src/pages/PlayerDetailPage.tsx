@@ -8,6 +8,7 @@ import {
   PlayerProfileHeader,
   PlayerSeasonHistory,
   PlayerStatsGrid,
+  TransferHistory,
 } from '@/components/player-detail'
 import {
   EmptyState,
@@ -23,6 +24,7 @@ import {
   usePlayer,
   usePlayerSeasonHistory,
   usePlayerSeasons,
+  usePlayerTransfers,
 } from '@/hooks'
 import {
   aggregatePlayerStatistics,
@@ -105,6 +107,15 @@ export function PlayerDetailPage() {
   } = usePlayerSeasonHistory(id, accessibleSeasons, {
     enabled: isValidId && !isSeasonsError && accessibleSeasons.length > 0,
   })
+
+  const {
+    transfers,
+    isLoading: isTransfersLoading,
+    isError: isTransfersError,
+    errorMessage: transfersErrorMessage,
+    refetch: refetchTransfers,
+    isFetching: isTransfersFetching,
+  } = usePlayerTransfers({ player: id }, { enabled: isValidId })
 
   const aggregatedStats = useMemo(
     () => (player ? aggregatePlayerStatistics(player.statistics) : null),
@@ -221,6 +232,22 @@ export function PlayerDetailPage() {
             isSeasonsLoading={isSeasonsLoading}
             isLoading={false}
           />
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">
+              Transfer History
+            </h2>
+            <TransferHistory
+              transfers={transfers}
+              isLoading={isTransfersLoading}
+              isError={isTransfersError}
+              errorMessage={transfersErrorMessage}
+              onRetry={() => {
+                void refetchTransfers()
+              }}
+              isRetrying={isTransfersFetching}
+            />
+          </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-bold tracking-tight">

@@ -42,6 +42,13 @@ describe('lib/query-keys', () => {
       11,
     ])
 
+    expect(queryKeys.players.transfers(11)).toEqual([
+      'football',
+      'players',
+      'transfers',
+      11,
+    ])
+
     expect(
       queryKeys.players.topPlayers('scorers', { league: 39, season: 2024 }),
     ).toEqual([

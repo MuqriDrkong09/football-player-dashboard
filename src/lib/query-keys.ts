@@ -33,6 +33,8 @@ export const queryKeys = {
       [...queryKeys.players.details(), params] as const,
     seasons: (playerId: number) =>
       [...queryKeys.players.all(), 'seasons', playerId] as const,
+    transfers: (playerId: number) =>
+      [...queryKeys.players.all(), 'transfers', playerId] as const,
     topPlayers: (kind: TopPlayersKind, params: LeagueSeasonParams) =>
       [...queryKeys.players.all(), TOP_PLAYERS_KEY[kind], params] as const,
   },

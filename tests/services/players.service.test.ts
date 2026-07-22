@@ -7,6 +7,7 @@ import {
   getPlayer,
   getPlayers,
   getPlayerSeasons,
+  getPlayerTransfers,
   getTopPlayers,
   searchPlayers,
 } from '@/services/players.service'
@@ -82,6 +83,29 @@ describe('services/players.service', () => {
       page: 1,
       team: undefined,
     })
+  })
+
+  it('returns the first transfer record or null', async () => {
+    const transfers = {
+      player: { id: 11, name: 'Test Player' },
+      update: '2024-01-01T00:00:00+00:00',
+      transfers: [],
+    }
+
+    mockedApiGet.mockResolvedValueOnce({
+      data: [transfers],
+      results: 1,
+      paging: { current: 1, total: 1 },
+    })
+    await expect(getPlayerTransfers({ player: 11 })).resolves.toEqual(transfers)
+    expect(mockedApiGet).toHaveBeenCalledWith('/transfers', { player: 11 })
+
+    mockedApiGet.mockResolvedValueOnce({
+      data: [],
+      results: 0,
+      paging: { current: 1, total: 1 },
+    })
+    await expect(getPlayerTransfers({ player: 11 })).resolves.toBeNull()
   })
 
   it('routes top-player kinds to the correct endpoints', async () => {
