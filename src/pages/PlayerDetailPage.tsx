@@ -5,6 +5,7 @@ import { isApiError } from '@/api'
 import {
   CareerStatisticsSummary,
   CareerTimeline,
+  CareerTransferTimeline,
   PlayerProfileHeader,
   PlayerSeasonHistory,
   PlayerStatsGrid,
@@ -238,6 +239,22 @@ export function PlayerDetailPage() {
               Transfer History
             </h2>
             <TransferHistory
+              transfers={transfers}
+              isLoading={isTransfersLoading}
+              isError={isTransfersError}
+              errorMessage={transfersErrorMessage}
+              onRetry={() => {
+                void refetchTransfers()
+              }}
+              isRetrying={isTransfersFetching}
+            />
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">
+              Career Transfer Timeline
+            </h2>
+            <CareerTransferTimeline
               transfers={transfers}
               isLoading={isTransfersLoading}
               isError={isTransfersError}

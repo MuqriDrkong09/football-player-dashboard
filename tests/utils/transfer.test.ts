@@ -1,7 +1,10 @@
 import type { TransferRecord } from '@/types/api-football'
 import {
   formatTransferDate,
+  getMaxTransferFeeValue,
+  getTransferHighlight,
   getTransferSeasonLabel,
+  parseFeeValue,
   parseTransferDetails,
   sortTransfersByDate,
 } from '@/utils/transfer'
@@ -119,6 +122,88 @@ describe('utils/transfer', () => {
       '2022-06-01',
       '2019-07-15',
     ])
+  })
+
+  it('sorts transfers by date ascending', () => {
+    expect(sortTransfersByDate(transfers, 'asc').map((item) => item.date)).toEqual([
+      '2019-07-15',
+      '2022-06-01',
+      '2023-01-10',
+    ])
+  })
+
+  it('parses fee values and transfer highlights', () => {
+    expect(parseFeeValue('€85M')).toBe(85_000_000)
+    expect(parseFeeValue('$50M')).toBe(50_000_000)
+    expect(parseFeeValue('£30K')).toBe(30_000)
+    expect(parseFeeValue('1,500,000')).toBe(1_500_000)
+    expect(parseFeeValue('invalid')).toBe(0)
+    expect(parseFeeValue('')).toBe(0)
+
+    expect(getMaxTransferFeeValue(transfers)).toBe(85_000_000)
+    expect(getMaxTransferFeeValue([])).toBe(0)
+    expect(getMaxTransferFeeValue([transfers[0], transfers[1]])).toBe(0)
+    expect(getTransferHighlight(transfers[0], transfers)).toBe('free')
+    expect(getTransferHighlight(transfers[1], transfers)).toBe('loan')
+    expect(getTransferHighlight(transfers[2], transfers)).toBe('record')
+    expect(
+      getTransferHighlight(
+        {
+          date: '2020-01-01',
+          type: '€10M',
+          teams: {
+            in: { id: 1, name: 'A', logo: '' },
+            out: { id: 2, name: 'B', logo: '' },
+          },
+        },
+        transfers,
+      ),
+    ).toBeNull()
+    expect(
+      getTransferHighlight(
+        {
+          date: '2020-01-01',
+          type: '€0',
+          teams: {
+            in: { id: 1, name: 'A', logo: '' },
+            out: { id: 2, name: 'B', logo: '' },
+          },
+        },
+        [
+          {
+            date: '2020-01-01',
+            type: '€0',
+            teams: {
+              in: { id: 1, name: 'A', logo: '' },
+              out: { id: 2, name: 'B', logo: '' },
+            },
+          },
+        ],
+      ),
+    ).toBeNull()
+    expect(
+      getTransferHighlight(
+        {
+          date: '2020-01-01',
+          type: 'Permanent',
+          teams: {
+            in: { id: 1, name: 'A', logo: '' },
+            out: { id: 2, name: 'B', logo: '' },
+          },
+        },
+        transfers,
+      ),
+    ).toBeNull()
+    expect(parseFeeValue('not-a-number')).toBe(0)
+  })
+
+  it('returns 0 when parsed fee digits are not a valid number', () => {
+    const isNaNSpy = jest.spyOn(Number, 'isNaN').mockReturnValueOnce(true)
+
+    expect(parseFeeValue('€5M')).toBe(0)
+    expect(isNaNSpy).toHaveBeenCalled()
+
+    isNaNSpy.mockRestore()
   })
 
   it('places transfers with missing or invalid dates after dated transfers', () => {
