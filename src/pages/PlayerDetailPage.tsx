@@ -8,6 +8,7 @@ import {
   CareerTimeline,
   CareerTransferTimeline,
   InjuryHistory,
+  InjuryTimeline,
   PlayerProfileHeader,
   PlayerSeasonHistory,
   PlayerStatsGrid,
@@ -36,6 +37,7 @@ import {
   getSeasonTrendChartData,
   pickDefaultSeason,
 } from '@/utils/player'
+import { buildInjuryTimeline } from '@/utils/injury'
 
 const PlayerStatsCharts = lazy(() =>
   import('@/components/player-detail/PlayerStatsCharts').then((module) => ({
@@ -123,6 +125,8 @@ export function PlayerDetailPage() {
 
   const {
     records: injuryHistoryRecords,
+    sidelined: sidelinedRecords,
+    injuries: injuryFixtureRecords,
     isLoading: isInjuryHistoryLoading,
     isError: isInjuryHistoryError,
     errorMessage: injuryHistoryErrorMessage,
@@ -131,6 +135,16 @@ export function PlayerDetailPage() {
   } = usePlayerInjuryHistory(id, accessibleSeasons, {
     enabled: isValidId && !isSeasonsError && accessibleSeasons.length > 0,
   })
+
+  const injuryTimelineItems = useMemo(
+    () =>
+      buildInjuryTimeline(
+        sidelinedRecords,
+        injuryFixtureRecords,
+        transfers,
+      ),
+    [injuryFixtureRecords, sidelinedRecords, transfers],
+  )
 
   const aggregatedStats = useMemo(
     () => (player ? aggregatePlayerStatistics(player.statistics) : null),
@@ -313,6 +327,20 @@ export function PlayerDetailPage() {
                 isLoading={isInjuryHistoryLoading}
               />
             )}
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">Injury Timeline</h2>
+            <InjuryTimeline
+              items={injuryTimelineItems}
+              isLoading={isInjuryHistoryLoading}
+              isError={isInjuryHistoryError}
+              errorMessage={injuryHistoryErrorMessage}
+              onRetry={() => {
+                void refetchInjuryHistory()
+              }}
+              isRetrying={isInjuryHistoryFetching}
+            />
           </section>
 
           <section className="space-y-4">
