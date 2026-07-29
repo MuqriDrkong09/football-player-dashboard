@@ -7,6 +7,7 @@ import {
   CareerSummary,
   CareerTimeline,
   CareerTransferTimeline,
+  InjuryAnalytics,
   InjuryHistory,
   InjuryTimeline,
   PlayerProfileHeader,
@@ -37,7 +38,12 @@ import {
   getSeasonTrendChartData,
   pickDefaultSeason,
 } from '@/utils/player'
-import { buildInjuryTimeline } from '@/utils/injury'
+import {
+  buildInjuryAnalyticsSummary,
+  buildInjuryTimeline,
+  getInjuriesBySeasonChartData,
+  getRecoveryDurationTrendChartData,
+} from '@/utils/injury'
 
 const PlayerStatsCharts = lazy(() =>
   import('@/components/player-detail/PlayerStatsCharts').then((module) => ({
@@ -144,6 +150,21 @@ export function PlayerDetailPage() {
         transfers,
       ),
     [injuryFixtureRecords, sidelinedRecords, transfers],
+  )
+
+  const injuryAnalyticsSummary = useMemo(
+    () => buildInjuryAnalyticsSummary(sidelinedRecords),
+    [sidelinedRecords],
+  )
+
+  const injuriesBySeasonData = useMemo(
+    () => getInjuriesBySeasonChartData(sidelinedRecords),
+    [sidelinedRecords],
+  )
+
+  const recoveryDurationTrendData = useMemo(
+    () => getRecoveryDurationTrendChartData(sidelinedRecords),
+    [sidelinedRecords],
   )
 
   const aggregatedStats = useMemo(
@@ -333,6 +354,22 @@ export function PlayerDetailPage() {
             <h2 className="text-xl font-bold tracking-tight">Injury Timeline</h2>
             <InjuryTimeline
               items={injuryTimelineItems}
+              isLoading={isInjuryHistoryLoading}
+              isError={isInjuryHistoryError}
+              errorMessage={injuryHistoryErrorMessage}
+              onRetry={() => {
+                void refetchInjuryHistory()
+              }}
+              isRetrying={isInjuryHistoryFetching}
+            />
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">Injury Analytics</h2>
+            <InjuryAnalytics
+              summary={injuryAnalyticsSummary}
+              injuriesBySeason={injuriesBySeasonData}
+              recoveryDurationTrend={recoveryDurationTrendData}
               isLoading={isInjuryHistoryLoading}
               isError={isInjuryHistoryError}
               errorMessage={injuryHistoryErrorMessage}

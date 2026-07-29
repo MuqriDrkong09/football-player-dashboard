@@ -1,3 +1,4 @@
+import { formatSeasonLabel } from '@/config/football'
 import type {
   InjuryRecord,
   SidelinedRecord,
@@ -43,6 +44,29 @@ export type InjuryTimelineItem = {
 }
 
 export const LONG_TERM_INJURY_MS = 30 * 24 * 60 * 60 * 1000
+
+export type InjuryAnalyticsSummary = {
+  totalInjuries: number
+  totalRecoveryDays: number
+  longestInjury: {
+    injuryType: string
+    durationLabel: string
+    durationDays: number
+  } | null
+  currentInjuryStatus: string
+}
+
+export type InjuriesBySeasonChartPoint = {
+  season: number
+  label: string
+  injuries: number
+}
+
+export type RecoveryDurationTrendChartPoint = {
+  season: number
+  label: string
+  averageDays: number
+}
 
 const BODY_AREA_PATTERNS = [
   'Hamstring',
@@ -349,4 +373,113 @@ export function buildInjuryTimeline(
       ),
     }
   })
+}
+
+function getInjurySeasonFromStart(start: string): number | null {
+  const startDate = parseDate(start)
+  if (!startDate) return null
+
+  const year = startDate.getFullYear()
+  return startDate.getMonth() >= 7 ? year : year - 1
+}
+
+export function getRecoveryDurationDays(
+  start: string,
+  end: string | null,
+  now = Date.now(),
+): number | null {
+  const startDate = parseDate(start)
+  if (!startDate) return null
+
+  const endDate = parseDate(end)
+  const rangeEnd = endDate && endDate.getTime() <= now ? endDate.getTime() : now
+
+  if (rangeEnd < startDate.getTime()) return null
+
+  return Math.floor((rangeEnd - startDate.getTime()) / (24 * 60 * 60 * 1000))
+}
+
+export function buildInjuryAnalyticsSummary(
+  sidelinedRecords: SidelinedRecord[],
+  now = Date.now(),
+): InjuryAnalyticsSummary {
+  const sortedRecords = sortSidelinedByStart(sidelinedRecords, 'desc')
+  let totalRecoveryDays = 0
+  let longestInjury: InjuryAnalyticsSummary['longestInjury'] = null
+
+  for (const record of sidelinedRecords) {
+    const durationDays = getRecoveryDurationDays(record.start, record.end, now)
+    if (durationDays == null) continue
+
+    totalRecoveryDays += durationDays
+
+    if (!longestInjury || durationDays > longestInjury.durationDays) {
+      longestInjury = {
+        injuryType: record.type,
+        durationLabel: formatStayDuration(durationDays * 24 * 60 * 60 * 1000),
+        durationDays,
+      }
+    }
+  }
+
+  const currentRecord = sortedRecords.find((record) =>
+    isCurrentInjury(getInjuryRecoveryStatus(record.start, record.end, now).status),
+  )
+
+  return {
+    totalInjuries: sidelinedRecords.length,
+    totalRecoveryDays,
+    longestInjury,
+    currentInjuryStatus: currentRecord
+      ? getInjuryRecoveryStatus(currentRecord.start, currentRecord.end, now).label
+      : 'Fit',
+  }
+}
+
+export function getInjuriesBySeasonChartData(
+  sidelinedRecords: SidelinedRecord[],
+): InjuriesBySeasonChartPoint[] {
+  const counts = new Map<number, number>()
+
+  for (const record of sidelinedRecords) {
+    const season = getInjurySeasonFromStart(record.start)
+    if (season == null) continue
+
+    counts.set(season, (counts.get(season) ?? 0) + 1)
+  }
+
+  return [...counts.entries()]
+    .sort(([seasonA], [seasonB]) => seasonA - seasonB)
+    .map(([season, injuries]) => ({
+      season,
+      label: formatSeasonLabel(season),
+      injuries,
+    }))
+}
+
+export function getRecoveryDurationTrendChartData(
+  sidelinedRecords: SidelinedRecord[],
+  now = Date.now(),
+): RecoveryDurationTrendChartPoint[] {
+  const seasonTotals = new Map<number, { totalDays: number; count: number }>()
+
+  for (const record of sidelinedRecords) {
+    const season = getInjurySeasonFromStart(record.start)
+    const durationDays = getRecoveryDurationDays(record.start, record.end, now)
+    if (season == null || durationDays == null) continue
+
+    const existing = seasonTotals.get(season) ?? { totalDays: 0, count: 0 }
+    seasonTotals.set(season, {
+      totalDays: existing.totalDays + durationDays,
+      count: existing.count + 1,
+    })
+  }
+
+  return [...seasonTotals.entries()]
+    .sort(([seasonA], [seasonB]) => seasonA - seasonB)
+    .map(([season, { totalDays, count }]) => ({
+      season,
+      label: formatSeasonLabel(season),
+      averageDays: Math.round(totalDays / count),
+    }))
 }

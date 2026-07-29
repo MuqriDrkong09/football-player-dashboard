@@ -1,15 +1,19 @@
 import type { InjuryRecord, SidelinedRecord } from '@/types/api-football'
 import type { TransferRecord } from '@/types/api-football'
 import {
+  buildInjuryAnalyticsSummary,
   buildInjuryHistory,
   buildInjuryTimeline,
   countMatchesMissed,
   extractBodyArea,
   formatInjuryDate,
   getClubAtInjury,
+  getInjuriesBySeasonChartData,
   getInjuryRecoveryStatus,
   getInjuryTimelineHighlights,
+  getRecoveryDurationDays,
   getRecoveryDurationLabel,
+  getRecoveryDurationTrendChartData,
   isCurrentInjury,
   isLongTermInjury,
 } from '@/utils/injury'
@@ -375,6 +379,79 @@ describe('utils/injury', () => {
       'Invalid First',
       'Invalid Third',
     ])
+
+    jest.useRealTimers()
+  })
+
+  it('builds injury analytics summary and chart data', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2024-06-01T00:00:00Z'))
+
+    const analyticsRecords: SidelinedRecord[] = [
+      {
+        type: 'Hamstring Injury',
+        start: '2022-09-01',
+        end: '2022-10-01',
+      },
+      {
+        type: 'Knee Injury',
+        start: '2023-08-01',
+        end: '2023-11-15',
+      },
+      {
+        type: 'Ankle Injury',
+        start: '2024-01-10',
+        end: 'Unknown',
+      },
+      {
+        type: 'Invalid Injury',
+        start: 'invalid',
+        end: 'Unknown',
+      },
+    ]
+
+    const summary = buildInjuryAnalyticsSummary(analyticsRecords)
+
+    expect(summary.totalInjuries).toBe(4)
+    expect(summary.totalRecoveryDays).toBeGreaterThan(0)
+    expect(summary.longestInjury?.injuryType).toBe('Ankle Injury')
+    expect(summary.currentInjuryStatus).toBe('Currently sidelined')
+    expect(getInjuriesBySeasonChartData(analyticsRecords)).toEqual([
+      { season: 2022, label: '2022/23', injuries: 1 },
+      { season: 2023, label: '2023/24', injuries: 2 },
+    ])
+    expect(getRecoveryDurationTrendChartData(analyticsRecords)).toEqual([
+      { season: 2022, label: '2022/23', averageDays: 30 },
+      { season: 2023, label: '2023/24', averageDays: 125 },
+    ])
+    expect(getRecoveryDurationDays('2023-08-01', '2023-09-01')).toBe(31)
+    expect(getRecoveryDurationDays('invalid', null)).toBeNull()
+    expect(getRecoveryDurationDays('2024-06-01', '2024-01-01')).toBeNull()
+    expect(
+      buildInjuryAnalyticsSummary([
+        { type: 'Invalid Injury', start: 'invalid', end: 'Unknown' },
+        { type: 'Calf Injury', start: '2023-08-01', end: '2023-08-10' },
+      ]).longestInjury,
+    ).toEqual({
+      injuryType: 'Calf Injury',
+      durationLabel: '9 days',
+      durationDays: 9,
+    })
+    expect(
+      buildInjuryAnalyticsSummary([
+        { type: 'Knee Injury', start: '2023-08-01', end: '2023-09-15' },
+        { type: 'Calf Injury', start: '2023-08-01', end: '2023-08-05' },
+      ]).longestInjury?.injuryType,
+    ).toBe('Knee Injury')
+    expect(getInjuriesBySeasonChartData([
+      { type: 'Invalid Injury', start: 'invalid', end: 'Unknown' },
+    ])).toEqual([])
+    expect(buildInjuryAnalyticsSummary([])).toEqual({
+      totalInjuries: 0,
+      totalRecoveryDays: 0,
+      longestInjury: null,
+      currentInjuryStatus: 'Fit',
+    })
 
     jest.useRealTimers()
   })
