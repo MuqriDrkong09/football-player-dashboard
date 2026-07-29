@@ -7,6 +7,8 @@ import {
   getPlayer,
   getPlayers,
   getPlayerSeasons,
+  getPlayerInjuries,
+  getPlayerSidelined,
   getPlayerTransfers,
   getTopPlayers,
   searchPlayers,
@@ -106,6 +108,29 @@ describe('services/players.service', () => {
       paging: { current: 1, total: 1 },
     })
     await expect(getPlayerTransfers({ player: 11 })).resolves.toBeNull()
+  })
+
+  it('fetches sidelined and injury records', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      data: [{ type: 'Hamstring Injury', start: '2023-08-01', end: '2023-10-15' }],
+      results: 1,
+      paging: { current: 1, total: 1 },
+    })
+    await expect(getPlayerSidelined({ player: 11 })).resolves.toEqual([
+      { type: 'Hamstring Injury', start: '2023-08-01', end: '2023-10-15' },
+    ])
+    expect(mockedApiGet).toHaveBeenCalledWith('/sidelined', { player: 11 })
+
+    mockedApiGet.mockResolvedValueOnce({
+      data: [],
+      results: 0,
+      paging: { current: 1, total: 1 },
+    })
+    await expect(getPlayerInjuries({ player: 11, season: 2023 })).resolves.toEqual([])
+    expect(mockedApiGet).toHaveBeenCalledWith('/injuries', {
+      player: 11,
+      season: 2023,
+    })
   })
 
   it('routes top-player kinds to the correct endpoints', async () => {

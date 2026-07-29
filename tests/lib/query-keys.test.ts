@@ -69,6 +69,21 @@ describe('lib/query-keys', () => {
       'top-yellow-cards',
       { league: 39, season: 2024 },
     ])
+
+    expect(queryKeys.players.sidelined(11)).toEqual([
+      'football',
+      'players',
+      'sidelined',
+      11,
+    ])
+
+    expect(queryKeys.players.injuries(11, 2023)).toEqual([
+      'football',
+      'players',
+      'injuries',
+      11,
+      2023,
+    ])
   })
 
   it('builds team list keys', () => {

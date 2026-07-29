@@ -2,6 +2,8 @@ export {
   getPlayer,
   getPlayers,
   getPlayerSeasons,
+  getPlayerInjuries,
+  getPlayerSidelined,
   getPlayerTransfers,
   getTopPlayers,
   searchPlayers,

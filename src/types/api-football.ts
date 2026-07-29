@@ -201,6 +201,41 @@ export interface GetPlayerTransfersParams {
   player: number
 }
 
+export interface SidelinedRecord {
+  type: string
+  start: string
+  end: string | null
+}
+
+export interface GetPlayerSidelinedParams {
+  player: number
+}
+
+export interface InjuryFixtureContext {
+  id: number
+  timezone: string
+  date: string
+  timestamp: number
+}
+
+export interface InjuryRecord {
+  player: {
+    id: number
+    name: string
+    photo: string
+    type: string | null
+    reason: string | null
+  }
+  team: TeamInfo
+  fixture: InjuryFixtureContext
+  league: LeagueInfo
+}
+
+export interface GetPlayerInjuriesParams {
+  player: number
+  season: number
+}
+
 export interface SearchPlayersParams {
   search: string
   league?: number

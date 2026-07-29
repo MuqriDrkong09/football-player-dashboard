@@ -7,6 +7,7 @@ import {
   CareerSummary,
   CareerTimeline,
   CareerTransferTimeline,
+  InjuryHistory,
   PlayerProfileHeader,
   PlayerSeasonHistory,
   PlayerStatsGrid,
@@ -24,6 +25,7 @@ import { PAGE_META } from '@/config/seo'
 import {
   usePageMeta,
   usePlayer,
+  usePlayerInjuryHistory,
   usePlayerSeasonHistory,
   usePlayerSeasons,
   usePlayerTransfers,
@@ -118,6 +120,17 @@ export function PlayerDetailPage() {
     refetch: refetchTransfers,
     isFetching: isTransfersFetching,
   } = usePlayerTransfers({ player: id }, { enabled: isValidId })
+
+  const {
+    records: injuryHistoryRecords,
+    isLoading: isInjuryHistoryLoading,
+    isError: isInjuryHistoryError,
+    errorMessage: injuryHistoryErrorMessage,
+    refetch: refetchInjuryHistory,
+    isFetching: isInjuryHistoryFetching,
+  } = usePlayerInjuryHistory(id, accessibleSeasons, {
+    enabled: isValidId && !isSeasonsError && accessibleSeasons.length > 0,
+  })
 
   const aggregatedStats = useMemo(
     () => (player ? aggregatePlayerStatistics(player.statistics) : null),
@@ -279,6 +292,27 @@ export function PlayerDetailPage() {
               }}
               isRetrying={isTransfersFetching}
             />
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">Injury History</h2>
+            {isInjuryHistoryError ? (
+              <QueryError
+                message={
+                  injuryHistoryErrorMessage ??
+                  'Failed to load injury history.'
+                }
+                onRetry={() => {
+                  void refetchInjuryHistory()
+                }}
+                isRetrying={isInjuryHistoryFetching}
+              />
+            ) : (
+              <InjuryHistory
+                records={injuryHistoryRecords}
+                isLoading={isInjuryHistoryLoading}
+              />
+            )}
           </section>
 
           <section className="space-y-4">

@@ -2,13 +2,17 @@ import { apiGet } from '@/api/client'
 import type {
   GetPlayerParams,
   GetPlayersParams,
+  GetPlayerInjuriesParams,
   GetPlayerSeasonsParams,
+  GetPlayerSidelinedParams,
   GetPlayerTransfersParams,
+  InjuryRecord,
   LeagueSeasonParams,
   PaginatedResult,
   PlayerProfile,
   PlayerTransfers,
   SearchPlayersParams,
+  SidelinedRecord,
   TopPlayersKind,
 } from '@/types/api-football'
 
@@ -44,6 +48,20 @@ export async function getPlayerTransfers(
 ): Promise<PlayerTransfers | null> {
   const { data } = await apiGet<PlayerTransfers[]>('/transfers', params)
   return data[0] ?? null
+}
+
+export async function getPlayerSidelined(
+  params: GetPlayerSidelinedParams,
+): Promise<SidelinedRecord[]> {
+  const { data } = await apiGet<SidelinedRecord[]>('/sidelined', params)
+  return data
+}
+
+export async function getPlayerInjuries(
+  params: GetPlayerInjuriesParams,
+): Promise<InjuryRecord[]> {
+  const { data } = await apiGet<InjuryRecord[]>('/injuries', params)
+  return data
 }
 
 export async function searchPlayers(
