@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { isApiError } from '@/api'
 import {
   CareerStatisticsSummary,
+  CareerSummary,
   CareerTimeline,
   CareerTransferTimeline,
   PlayerProfileHeader,
@@ -233,6 +234,20 @@ export function PlayerDetailPage() {
             isSeasonsLoading={isSeasonsLoading}
             isLoading={false}
           />
+
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold tracking-tight">Career Summary</h2>
+            <CareerSummary
+              transfers={transfers}
+              isLoading={isTransfersLoading}
+              isError={isTransfersError}
+              errorMessage={transfersErrorMessage}
+              onRetry={() => {
+                void refetchTransfers()
+              }}
+              isRetrying={isTransfersFetching}
+            />
+          </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-bold tracking-tight">

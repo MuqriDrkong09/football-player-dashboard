@@ -1,4 +1,5 @@
 export { CareerStatisticsSummary } from './CareerStatisticsSummary'
+export { CareerSummary } from './CareerSummary'
 export { CareerTimeline } from './CareerTimeline'
 export { CareerTransferTimeline } from './CareerTransferTimeline'
 export { PlayerProfileHeader } from './PlayerProfileHeader'

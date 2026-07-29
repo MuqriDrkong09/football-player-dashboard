@@ -1,5 +1,7 @@
 import type { TransferRecord } from '@/types/api-football'
 import {
+  buildCareerSummaryFromTransfers,
+  formatStayDuration,
   formatTransferDate,
   getMaxTransferFeeValue,
   getTransferHighlight,
@@ -204,6 +206,130 @@ describe('utils/transfer', () => {
     expect(isNaNSpy).toHaveBeenCalled()
 
     isNaNSpy.mockRestore()
+  })
+
+  it('builds career summary metrics from transfer history', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+
+    const summary = buildCareerSummaryFromTransfers(transfers)
+
+    expect(summary.totalClubs).toBe(5)
+    expect(summary.totalTransfers).toBe(3)
+    expect(summary.currentClub?.name).toBe('Bayern Munich')
+    expect(summary.longestClubStay?.clubName).toBe('Real Madrid')
+    expect(summary.mostExpensiveTransfer).toBe('€85M')
+    expect(buildCareerSummaryFromTransfers([])).toEqual({
+      totalClubs: 0,
+      totalTransfers: 0,
+      currentClub: null,
+      longestClubStay: null,
+      mostExpensiveTransfer: null,
+    })
+
+    jest.useRealTimers()
+  })
+
+  it('formats stay durations', () => {
+    expect(formatStayDuration(10 * 24 * 60 * 60 * 1000)).toBe('10 days')
+    expect(formatStayDuration(1 * 24 * 60 * 60 * 1000)).toBe('1 day')
+    expect(formatStayDuration(45 * 24 * 60 * 60 * 1000)).toBe('1 mo')
+    expect(formatStayDuration(360 * 24 * 60 * 60 * 1000)).toBe('1 yr')
+    expect(formatStayDuration(720 * 24 * 60 * 60 * 1000)).toBe('2 yrs')
+    expect(formatStayDuration(400 * 24 * 60 * 60 * 1000)).toBe('1 yr 1 mo')
+    expect(formatStayDuration(500 * 24 * 60 * 60 * 1000)).toBe('1 yr 4 mo')
+  })
+
+  it('aggregates repeated club stays and handles invalid transfer dates', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+
+    const repeatedClubTransfers: TransferRecord[] = [
+      {
+        date: '2020-01-01',
+        type: 'Free',
+        teams: {
+          in: { id: 1, name: 'Liverpool', logo: 'liv.png' },
+          out: { id: 2, name: 'Southampton', logo: '' },
+        },
+      },
+      {
+        date: '2021-01-01',
+        type: 'Loan',
+        teams: {
+          in: { id: 3, name: 'Chelsea', logo: 'che.png' },
+          out: { id: 1, name: 'Liverpool', logo: 'liv.png' },
+        },
+      },
+      {
+        date: '2022-01-01',
+        type: 'Free',
+        teams: {
+          in: { id: 1, name: 'Liverpool', logo: 'liv.png' },
+          out: { id: 3, name: 'Chelsea', logo: 'che.png' },
+        },
+      },
+      {
+        date: 'invalid',
+        type: 'Free',
+        teams: {
+          in: { id: 4, name: 'Real Madrid', logo: 'rm.png' },
+          out: { id: 1, name: 'Liverpool', logo: 'liv.png' },
+        },
+      },
+      {
+        date: null,
+        type: 'Free',
+        teams: {
+          in: { id: 5, name: 'Arsenal', logo: 'ars.png' },
+          out: { id: 4, name: 'Real Madrid', logo: 'rm.png' },
+        },
+      },
+    ]
+
+    const summary = buildCareerSummaryFromTransfers(repeatedClubTransfers)
+
+    expect(summary.longestClubStay?.clubName).toBe('Liverpool')
+    expect(summary.mostExpensiveTransfer).toBeNull()
+    expect(summary.currentClub?.name).toBe('Liverpool')
+
+    const feeTransfers: TransferRecord[] = [
+      {
+        date: '2020-01-01',
+        type: '€85M',
+        teams: {
+          in: { id: 1, name: 'Liverpool', logo: '' },
+          out: { id: 2, name: 'Southampton', logo: '' },
+        },
+      },
+      {
+        date: '2021-01-01',
+        type: '€10M',
+        teams: {
+          in: { id: 3, name: 'Chelsea', logo: '' },
+          out: { id: 1, name: 'Liverpool', logo: '' },
+        },
+      },
+    ]
+
+    expect(buildCareerSummaryFromTransfers(feeTransfers).mostExpensiveTransfer).toBe(
+      '€85M',
+    )
+
+    expect(
+      buildCareerSummaryFromTransfers([
+        {
+          date: null,
+          type: 'Free',
+          teams: {
+            in: { id: 10, name: 'Arsenal', logo: '' },
+            out: { id: 11, name: 'Chelsea', logo: '' },
+          },
+        },
+      ]).longestClubStay,
+    ).toBeNull()
+
+    jest.useRealTimers()
   })
 
   it('places transfers with missing or invalid dates after dated transfers', () => {

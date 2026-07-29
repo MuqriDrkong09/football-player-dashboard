@@ -8,6 +8,166 @@ export type ParsedTransferDetails = {
 
 export type TransferHighlight = 'record' | 'free' | 'loan' | null
 
+export type CareerSummary = {
+  totalClubs: number
+  totalTransfers: number
+  currentClub: TransferRecord['teams']['in'] | null
+  longestClubStay: {
+    clubName: string
+    durationLabel: string
+  } | null
+  mostExpensiveTransfer: string | null
+}
+
+function parseTransferTimestamp(date: string | null): number | null {
+  if (!date) return null
+
+  const parsed = new Date(date)
+  if (Number.isNaN(parsed.getTime())) return null
+
+  return parsed.getTime()
+}
+
+export function formatStayDuration(durationMs: number): string {
+  const days = Math.floor(durationMs / (1000 * 60 * 60 * 24))
+
+  if (days < 30) {
+    return `${days} day${days === 1 ? '' : 's'}`
+  }
+
+  const months = Math.floor(days / 30)
+
+  if (months < 12) {
+    return `${months} mo`
+  }
+
+  const years = Math.floor(months / 12)
+  const remainingMonths = months % 12
+
+  if (remainingMonths === 0) {
+    return `${years} yr${years === 1 ? '' : 's'}`
+  }
+
+  return `${years} yr${years === 1 ? '' : 's'} ${remainingMonths} mo`
+}
+
+function collectUniqueClubIds(transfers: TransferRecord[]): Set<number> {
+  const clubIds = new Set<number>()
+
+  for (const transfer of transfers) {
+    clubIds.add(transfer.teams.in.id)
+    clubIds.add(transfer.teams.out.id)
+  }
+
+  return clubIds
+}
+
+function buildClubStayDurations(
+  transfers: TransferRecord[],
+): Array<{ clubId: number; clubName: string; durationMs: number }> {
+  const sortedTransfers = sortTransfersByDate(transfers, 'asc')
+  const now = Date.now()
+  const stayTotals = new Map<number, { clubName: string; durationMs: number }>()
+
+  for (let index = 0; index < sortedTransfers.length; index++) {
+    const transfer = sortedTransfers[index]
+    const startTime = parseTransferTimestamp(transfer.date)
+    if (startTime === null) continue
+
+    const club = transfer.teams.in
+    let endTime = now
+
+    for (let nextIndex = index + 1; nextIndex < sortedTransfers.length; nextIndex++) {
+      const nextTransfer = sortedTransfers[nextIndex]
+      if (nextTransfer.teams.out.id !== club.id) continue
+
+      const leaveTime = parseTransferTimestamp(nextTransfer.date)
+      if (leaveTime !== null) {
+        endTime = leaveTime
+      }
+      break
+    }
+
+    const durationMs = Math.max(0, endTime - startTime)
+    const existing = stayTotals.get(club.id)
+
+    if (existing) {
+      existing.durationMs += durationMs
+    } else {
+      stayTotals.set(club.id, { clubName: club.name, durationMs })
+    }
+  }
+
+  return Array.from(stayTotals.entries()).map(([clubId, stay]) => ({
+    clubId,
+    clubName: stay.clubName,
+    durationMs: stay.durationMs,
+  }))
+}
+
+function getMostExpensiveTransferFee(
+  transfers: TransferRecord[],
+): string | null {
+  let maxFeeValue = 0
+  let maxFeeLabel: string | null = null
+
+  for (const transfer of transfers) {
+    const { fee } = parseTransferDetails(transfer.type)
+    if (!fee) continue
+
+    const feeValue = parseFeeValue(fee)
+    if (feeValue > maxFeeValue) {
+      maxFeeValue = feeValue
+      maxFeeLabel = fee
+    }
+  }
+
+  return maxFeeLabel
+}
+
+function getCurrentClub(
+  transfers: TransferRecord[],
+): TransferRecord['teams']['in'] | null {
+  const sortedTransfers = sortTransfersByDate(transfers, 'desc')
+  return sortedTransfers[0].teams.in
+}
+
+export function buildCareerSummaryFromTransfers(
+  transfers: TransferRecord[],
+): CareerSummary {
+  if (transfers.length === 0) {
+    return {
+      totalClubs: 0,
+      totalTransfers: 0,
+      currentClub: null,
+      longestClubStay: null,
+      mostExpensiveTransfer: null,
+    }
+  }
+
+  const stays = buildClubStayDurations(transfers)
+  const longestStay = stays.reduce<(typeof stays)[number] | null>(
+    (longest, stay) => {
+      if (!longest || stay.durationMs > longest.durationMs) return stay
+      return longest
+    },
+    null,
+  )
+
+  return {
+    totalClubs: collectUniqueClubIds(transfers).size,
+    totalTransfers: transfers.length,
+    currentClub: getCurrentClub(transfers),
+    longestClubStay: longestStay
+      ? {
+          clubName: longestStay.clubName,
+          durationLabel: formatStayDuration(longestStay.durationMs),
+        }
+      : null,
+    mostExpensiveTransfer: getMostExpensiveTransferFee(transfers),
+  }
+}
+
 export function parseFeeValue(fee: string): number {
   const normalized = fee.replace(/,/g, '').trim()
   const match = normalized.match(/(\d+(?:\.\d+)?)/)
